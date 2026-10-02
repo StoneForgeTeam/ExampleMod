@@ -25,4 +25,4 @@ Close the game. Copy `mod.json`, the C# source folders, `Assets` and `GML` into 
 
 This mod changes game behavior: it demonstrates custom equipment and skills, displays level 99, and adds controls and panels. Use a test save. GML executes directly in the game and requires a restart after changes.
 
-The sample has its own version in `mod.json` and the editor project. Its minimum loader version is declared in `mod.json`. See the main repository's `docs/MODS.md` and `docs/GML.md` for API and binding guidance.
+The sample has its own version in `mod.json` and the editor project. Its minimum loader version is declared in `mod.json`. See [Writing a mod](https://github.com/StoneForgeTeam/StoneForgeDocs/blob/main/docs/modding/writing-a-mod.md) and [GML bindings](https://github.com/StoneForgeTeam/StoneForgeDocs/blob/main/docs/modding/gml-bindings.md) in the StoneForge documentation for API and binding guidance.
