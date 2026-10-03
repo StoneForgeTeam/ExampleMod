@@ -130,7 +130,7 @@ public class ExampleMod : IStoneMod, ITickable
     private bool _shownValues, _shownGameValues;
 
     // Every frame (ITickable): F4 gives the player an ability point, F5 an Example Tonic, F6 an Example Shirt, F7 an
-    // Example Blade; F8 shows or hides the notes.
+    // Example Blade; F8 shows or hides the notes; F2 clears every Example Tonic off the ground (ClearTonics).
     public void Tick(double deltaTime)
     {
         // GameMaker arrays and structs from C#, once each: our own, then the game's once we're in it.
@@ -157,5 +157,27 @@ public class ExampleMod : IStoneMod, ITickable
             _context.Log(_context.Items.Give(_tonic) ? "Gave an Example Tonic" : "Couldn't give the Example Tonic (no player, or no room)");
         if (Keyboard.Pressed(Keyboard.F6))
             _context.Log(_context.Items.Give(_shirt) ? "Gave the Example Shirt" : "Couldn't give the Example Shirt (no player, or no room)");
+        if (Keyboard.Pressed(Keyboard.F2) && Gm.InGame)
+            ClearTonics();
+    }
+
+    // Every Example Tonic lying on the ground in the room - the off-screen ones too, which the game has culled
+    // (deactivated): listed with includeCulled, and destroyed safely - a culled one leaves the game's culling list
+    // first. A tonic on the ground is its own object (o_loot_ and its game key), told apart by object_index even
+    // while it's culled - its own variables can't be read then.
+    private void ClearTonics()
+    {
+        int tonic = Gm.AssetGetIndex($"o_loot_{_context.Id}__{_tonic.Key}");
+        if (tonic < 0)
+            return;
+        int cleared = 0, offScreen = 0;
+        foreach (var item in Instances.All(tonic, includeCulled: true))
+        {
+            if (item.IsCulled)
+                offScreen++;
+            item.Destroy();
+            cleared++;
+        }
+        _context.Log($"Cleared {cleared} Example Tonic(s) off the ground ({offScreen} of them off screen)");
     }
 }

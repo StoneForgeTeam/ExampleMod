@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Off-screen instances (StoneForge's culled instances):
+  - The notepad (F8) counts the room's ground loot twice a second, the off-screen items too: `Instances.All(..., includeCulled: true)` and `IsCulled`.
+  - F2 clears every Example Tonic off the ground in the room, off-screen ones included. Each is listed by its own ground object, which is told apart by `object_index` even while it's culled, and removed with the safe `Destroy()`.
 - GameMaker arrays and structs from C# (`GameValues.cs`): the log shows one of each made, changed in place and sent through JSON when the game starts, and the game's own `global.playerSpriteArray` once you're in game, with the player's alarms (`Alarm[n]`). Needs the StoneForge release with `GmArray` / `GmStruct` and alarms.
 - Example Button's menu has the game's Back, and a Play Options menu inside it with the game's Continue, New Game, Load Game, Prologue, Adventure and Back.
 - Window Styles (main menu): a dialog in the game's confirm-panel frame, with no title, no close button and its two buttons in the frame's places. Its Sliced button opens the same frame 9-sliced to a bigger window over it (`UI/ExampleDialogs.cs`).
