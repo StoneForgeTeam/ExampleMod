@@ -38,11 +38,20 @@ public class ExampleMod : IStoneMod, ITickable
         var panel = context.UI.MainMenu.Add(new ExamplePanel(context.Manifest, context.LoadSprite("icon.png")));
         var controls = context.UI.MainMenu.Add(new ControlsPanel());
         // (The two go together: the button opens both unless both are open, the panel's Close closes both.)
-        MainMenu.AddButton(context, "Example", () => controls.Visible = panel.Visible = !(panel.Visible && controls.Visible));
         panel.Closed += () => controls.Visible = false;
         // And a window in the game's look (ExampleWindow), on the main menu's screen too.
         var window = context.UI.MainMenu.Add(new ExampleWindow(context, settings));
-        MainMenu.AddButton(context, "Example Window", window.Open);
+        // (Placed by name: just under the game's Play button - "Start" names it too, or the text shown on a button.)
+
+        MainMenu.AddAfter(context, VanillaButton.Credits, "Example Button", () =>
+        {
+            MainMenu.ClearButtons(context);
+            MainMenu.AddButton(context, VanillaButton.Play);
+            MainMenu.AddAfter(context, VanillaButton.Play, "Example Window", window.Open);
+            MainMenu.AddButton(context, "Example", () => controls.Visible = panel.Visible = !(panel.Visible && controls.Visible));
+            MainMenu.AddButton(context, "Back", () => MainMenu.RestoreButtons(context));
+        });
+
         context.UI.MainMenu.Hidden += () => controls.Visible = panel.Visible = false;
         // And one over the game world, on the in-game screen, toggled with F8 (NotesPanel).
         _notes = context.UI.InGame.Add(new NotesPanel());
