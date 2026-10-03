@@ -54,7 +54,19 @@ public class ExampleMod : IStoneMod, ITickable
             MainMenu.AddAfter(context, VanillaButton.Play, "Example Window", window.Open);
             MainMenu.AddButton(context, "Example", () => controls.Visible = panel.Visible = !(panel.Visible && controls.Visible));
             MainMenu.AddButton(context, "Window Styles", confirm.Open);
-            MainMenu.AddButton(context, "Back", () => MainMenu.RestoreButtons(context));
+            // A menu in this one: the game's play screen buttons, each doing what it does there.
+            MainMenu.AddButton(context, "Play Options", () =>
+            {
+                MainMenu.ClearButtons(context);
+                MainMenu.AddButton(context, VanillaButton.Continue);
+                MainMenu.AddButton(context, VanillaButton.NewGame);
+                MainMenu.AddButton(context, VanillaButton.LoadGame);
+                MainMenu.AddButton(context, VanillaButton.Prologue);
+                MainMenu.AddButton(context, VanillaButton.Adventure);
+                MainMenu.AddButton(context, VanillaButton.Back);
+            });
+            // (The game's Back: the main menu as it started.)
+            MainMenu.AddButton(context, VanillaButton.Back);
         });
 
         context.UI.MainMenu.Hidden += () => controls.Visible = panel.Visible = false;
