@@ -1,5 +1,9 @@
 # ExampleMod changes
 
+## Unreleased
+
+- Shock Bolt deals 10 damage with `Combat.Damage`, as Overcharge (`DamageTypes/Overcharge.cs`): a kind of damage of the mod's own, dealt as the game's shock but half as hard again on a target already Shocked. Needs the StoneForge release with damage types.
+
 ## 0.1.0 — Initial public release
 
 - Sample items, consumables, buffs, skills, UI panels and GML bindings for StoneForge.
