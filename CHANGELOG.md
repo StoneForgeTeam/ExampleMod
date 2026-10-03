@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Needs StoneForge 0.3.0.
 - Off-screen instances (StoneForge's culled instances):
   - The notepad (F8) counts the room's ground loot twice a second, the off-screen items too: `Instances.All(..., includeCulled: true)` and `IsCulled`.
   - F2 clears every Example Tonic off the ground in the room, off-screen ones included. Each is listed by its own ground object, which is told apart by `object_index` even while it's culled, and removed with the safe `Destroy()`.
