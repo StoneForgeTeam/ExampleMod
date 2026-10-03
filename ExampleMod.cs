@@ -127,10 +127,23 @@ public class ExampleMod : IStoneMod, ITickable
     // buffs, hooks, settings - is taken back for it; it changed nothing else in the game, so there's nothing to undo.
     public void Unload() => _context.Log("Switched off - goodbye!");
 
+    private bool _shownValues, _shownGameValues;
+
     // Every frame (ITickable): F4 gives the player an ability point, F5 an Example Tonic, F6 an Example Shirt, F7 an
     // Example Blade; F8 shows or hides the notes.
     public void Tick(double deltaTime)
     {
+        // GameMaker arrays and structs from C#, once each: our own, then the game's once we're in it.
+        if (!_shownValues)
+        {
+            _shownValues = true;
+            GameValues.ShowMade(_context);
+        }
+        if (!_shownGameValues && Gm.InGame)
+        {
+            _shownGameValues = true;
+            GameValues.ShowGames(_context);
+        }
         if (Keyboard.Pressed(Keyboard.F8) && _context.UI.InGame.IsActive)
             _notes.Visible = !_notes.Visible;
         if (Keyboard.Pressed(Keyboard.F7))
