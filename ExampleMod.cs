@@ -109,7 +109,7 @@ public class ExampleMod : IStoneMod, ITickable
             _notes.Visible = !_notes.Visible;
         if (Keyboard.Pressed(Keyboard.F7))
             _context.Log(_context.Items.Give(_blade) ? "Gave the Example Blade" : "Couldn't give the Example Blade (no player, or no room)");
-        if (Keyboard.Pressed(Keyboard.F4) && Instances.First<GameInstance>(GameObject.o_player) is { } player)
+        if (Keyboard.Pressed(Keyboard.F4) && Instances.First<GameInstance>(GameObjectId.o_player) is { } player)
         {
             Game.CallScript("scr_atr_incr", player.Instance, "SP", 1);
             _context.Log("Gave an ability point");

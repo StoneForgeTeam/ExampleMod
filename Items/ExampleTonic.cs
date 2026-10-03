@@ -25,7 +25,7 @@ public class ExampleTonic : Wine
 
     protected override void OnUse(Instance item)
     {
-        if (Instances.First<GameInstance>(GameObject.o_player) is { } player)
+        if (Instances.First<GameInstance>(GameObjectId.o_player) is { } player)
             Context.Buffs.Apply(_focus, player, 5);
         Context.Log("Example Tonic drunk: focused for 5 turns");
     }
