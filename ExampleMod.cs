@@ -41,6 +41,10 @@ public class ExampleMod : IStoneMod, ITickable
         panel.Closed += () => controls.Visible = false;
         // And a window in the game's look (ExampleWindow), on the main menu's screen too.
         var window = context.UI.MainMenu.Add(new ExampleWindow(context, settings));
+        // And windows in other frames (ExampleDialogs): the game's confirm panel, and the same frame 9-sliced bigger.
+        var sliced = context.UI.MainMenu.Add(new ExampleSlicedWindow());
+        var confirm = context.UI.MainMenu.Add(new ExampleConfirmWindow(context, sliced));
+
         // (Placed by name: just under the game's Play button - "Start" names it too, or the text shown on a button.)
 
         MainMenu.AddAfter(context, VanillaButton.Credits, "Example Button", () =>
@@ -49,6 +53,7 @@ public class ExampleMod : IStoneMod, ITickable
             MainMenu.AddButton(context, VanillaButton.Play);
             MainMenu.AddAfter(context, VanillaButton.Play, "Example Window", window.Open);
             MainMenu.AddButton(context, "Example", () => controls.Visible = panel.Visible = !(panel.Visible && controls.Visible));
+            MainMenu.AddButton(context, "Window Styles", confirm.Open);
             MainMenu.AddButton(context, "Back", () => MainMenu.RestoreButtons(context));
         });
 
