@@ -64,11 +64,13 @@ public class ExampleMod : IStoneMod, ITickable
         // And a consumable (ExampleTonic): a drink of our own; F5 gives one.
         _tonic = new ExampleTonic(focus);
         context.Items.Add(_tonic);
-        // And skills (ExampleSkill, ExampleSkill2): Shock Bolt, on its tab of the skills menu, and Storm Ward, learnt
+        // And skills (ExampleSkill, ExampleSkill2, StaticCharge): Shock Bolt, on its tab of the skills menu, and Storm Ward, learnt
         // once Shock Bolt is (and more); F4 gives an ability point.
         var shockBolt = new ShockBolt(shocked);
         context.Skills.Add(shockBolt);
         context.Skills.Add(new StormWard(focus, shockBolt));
+        // And a passive (StaticCharge): +5% Crit Chance, and weapon hits may shock.
+        context.Skills.Add(new StaticCharge(shocked));
 
         // An object event, with the instance already as its class: player.HP, not player.Get("HP").
         Events.o_player.Step_0.After(context, player =>
