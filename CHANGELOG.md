@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Needs StoneForge 0.4.0.
+- Moving between screens (`Rooms`): F1 goes into the room you're in again, as a door to it would. Example Button -> Play Options has Load Newest Save (`Rooms.LoadSave`) and New Adventure (`Rooms.StartNew`). Needs the StoneForge release with `Rooms`.
 - Saves (`SaveData`, `SaveSlots`): F3 logs the save data's sections, the character's apart from the world's, then this game's character folder with its saves, and every other folder. Each save made with the mod on is counted in the folder's info (`SaveSlots.OnInfoSaving`), and the save menu's header shows the count after the character's name (`SaveSlots.SetTitle`). Needs the StoneForge release with `SaveData` / `SaveSlots`.
 - F12 copies the ground item nearest you (`GroundItems`): its save in the game's format, and a copy made from it lying right where it lies. Then it puts a wine at your feet with the game's hop and logs its flight. Needs the StoneForge release with `GroundItems`.
 - F11 logs the saved state of the location you're in (`Locations`): its rooms, and each preset's flags and the kinds of entities it has saved. Needs the StoneForge release with `Locations`.

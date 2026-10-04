@@ -71,6 +71,14 @@ public class ExampleMod : IStoneMod, ITickable
                 MainMenu.AddButton(context, VanillaButton.LoadGame);
                 MainMenu.AddButton(context, VanillaButton.Prologue);
                 MainMenu.AddButton(context, VanillaButton.Adventure);
+                // The same moves made from C# (Rooms): the newest save loaded as the save menu loads it, and a new
+                // adventure started as the game's button starts one.
+                MainMenu.AddButton(context, "Load Newest Save", () =>
+                {
+                    var newest = SaveSlots.All.SelectMany(slot => slot.Saves.Take(1)).FirstOrDefault();
+                    context.Log(newest == null ? "No save to load" : Rooms.LoadSave(newest) ? $"Loading {newest.Slot.Name}/{newest.Name}" : "Couldn't load it now");
+                });
+                MainMenu.AddButton(context, "New Adventure", () => context.Log(Rooms.StartNew() ? "Starting a new adventure" : "Couldn't start one now"));
                 MainMenu.AddButton(context, VanillaButton.Back);
             });
             // (The game's Back: the main menu as it started.)
@@ -184,6 +192,10 @@ public class ExampleMod : IStoneMod, ITickable
         }
         if (Keyboard.Pressed(Keyboard.F11) && Locations.Here is var (locationTag, roomTag))
             LogLocation(locationTag, roomTag);
+        // F1 goes into the room you're in again, as a door to it would (Rooms.Change: the room saved, a fade, the room
+        // built again from its save).
+        if (Keyboard.Pressed(Keyboard.F1) && !Game.IsBusy && Gm.InGame)
+            _context.Log(Rooms.Change(Rooms.Current) ? $"Going into {Rooms.CurrentName} again" : "Couldn't change rooms now");
         if (Keyboard.Pressed(Keyboard.F3) && SaveData.Available)
             LogSaves();
         if (Keyboard.Pressed(Keyboard.F12) && !Game.IsBusy && Instances.First<GameInstance>(GameObjectId.o_player) is { } me)
