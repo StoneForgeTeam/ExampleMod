@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- A twin (`CharacterLook`): Shift+F12 reads your look and draws a character built from it a tile to your right, its sprites made by the game's own compositor (`Build`). Shift+F12 again removes it. Needs the StoneForge release with `CharacterLook`.
 - Needs StoneForge 0.4.0.
 - Moving between screens (`Rooms`): F1 goes into the room you're in again, as a door to it would. Example Button -> Play Options has Load Newest Save (`Rooms.LoadSave`) and New Adventure (`Rooms.StartNew`). Needs the StoneForge release with `Rooms`.
 - Saves (`SaveData`, `SaveSlots`): F3 logs the save data's sections, the character's apart from the world's, then this game's character folder with its saves, and every other folder. Each save made with the mod on is counted in the folder's info (`SaveSlots.OnInfoSaving`), and the save menu's header shows the count after the character's name (`SaveSlots.SetTitle`). Needs the StoneForge release with `SaveData` / `SaveSlots`.

@@ -34,6 +34,9 @@ public class ExampleMod : IStoneMod, ITickable
         context.Log(settings.Greeting.Value);
         // Its own GML functions (GML\*.gml), called through the generated Gml class: Twice calls Add.
         context.Log($"GML: Twice(21) = {Gml.Twice(21)}, Add(20, 22) = {Gml.Add(20, 22)}");
+        // A twin (CharacterLook): Shift+F12 reads your look and draws a character built from it a tile to your right -
+        // its sprites made by the game's own compositor, in o_player's Draw, where drawing to surfaces works.
+        context.OnCode("gml_Object_o_player_Draw_0", after: (player, _) => DrawTwin(player));
         // Saves (SaveSlots): each time the game saves, the character folder's info counts the saves made with the Example
         // Mod on, and the save menu's header shows that count after the character's name.
         SaveSlots.OnInfoSaving(context, (slot, info) =>
@@ -198,7 +201,9 @@ public class ExampleMod : IStoneMod, ITickable
             _context.Log(Rooms.Change(Rooms.Current) ? $"Going into {Rooms.CurrentName} again" : "Couldn't change rooms now");
         if (Keyboard.Pressed(Keyboard.F3) && SaveData.Available)
             LogSaves();
-        if (Keyboard.Pressed(Keyboard.F12) && !Game.IsBusy && Instances.First<GameInstance>(GameObjectId.o_player) is { } me)
+        if (Keyboard.Down(Keyboard.Shift) && Keyboard.Pressed(Keyboard.F12))
+            ToggleTwin();
+        else if (Keyboard.Pressed(Keyboard.F12) && !Game.IsBusy && Instances.First<GameInstance>(GameObjectId.o_player) is { } me)
             CopyNearestItem(me.Instance["x"].AsReal, me.Instance["y"].AsReal);
         if (Keyboard.Pressed(Keyboard.F9) && Time.Available && !Game.IsBusy)
         {
@@ -207,6 +212,39 @@ public class ExampleMod : IStoneMod, ITickable
             Time.Advance(60);
             _context.Log($"An hour passed: {before} ({before.OfDay}) -> {Time.Now} ({Time.OfDay})");
         }
+    }
+
+    // The twin's look (read when it's turned on) and its sprites (built when it's next drawn).
+    private CharacterLook? _twinLook;
+    private CharacterSprites? _twin;
+
+    private void ToggleTwin()
+    {
+        _twin?.Dispose();
+        _twin = null;
+        _twinLook = _twinLook == null ? CharacterLook.OfPlayer() : null;
+        if (_twinLook != null)
+            _context.Log($"A twin from your look: {_twinLook.Layers.Count} layers, {_twinLook.ToJson().Length} characters of JSON");
+    }
+
+    private void DrawTwin(Instance player)
+    {
+        if (_twinLook == null)
+            return;
+        if (_twin == null)
+        {
+            _twin = _twinLook.Build();
+            if (_twin == null)
+            {
+                _context.Log("Couldn't build the twin's sprites from your look");
+                _twinLook = null;
+                return;
+            }
+            _context.Log($"Built the twin's sprites: {string.Join(", ", _twin.All)}");
+        }
+        // (Drawn as you are: your frame and facing, a tile to the right.)
+        Game.CallBuiltin("draw_sprite_ext", _twin.For(0, false), player["image_index"], player["x"].AsReal + 26, player["y"],
+            player["image_xscale"], player["image_yscale"], 0, Draw.White, 1);
     }
 
     // The game being played (SaveData): its save data's sections, the character's apart from the world's - and the saves
