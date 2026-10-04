@@ -2,6 +2,7 @@ using ExampleMod.Skills;
 using ExampleMod.Buffs;
 using ExampleMod.Items;
 using ExampleMod.UI;
+using System;
 using System.Linq;
 using StoneForge;
 using StoneForge.Objects;
@@ -177,6 +178,8 @@ public class ExampleMod : IStoneMod, ITickable
         }
         if (Keyboard.Pressed(Keyboard.F11) && Locations.Here is var (locationTag, roomTag))
             LogLocation(locationTag, roomTag);
+        if (Keyboard.Pressed(Keyboard.F12) && !Game.IsBusy && Instances.First<GameInstance>(GameObjectId.o_player) is { } me)
+            CopyNearestItem(me.Instance["x"].AsReal, me.Instance["y"].AsReal);
         if (Keyboard.Pressed(Keyboard.F9) && Time.Available && !Game.IsBusy)
         {
             // (As play lets time pass: the hour's upkeep, and NPCs following the new time of day.)
@@ -184,6 +187,26 @@ public class ExampleMod : IStoneMod, ITickable
             Time.Advance(60);
             _context.Log($"An hour passed: {before} ({before.OfDay}) -> {Time.Now} ({Time.OfDay})");
         }
+    }
+
+    // Items on the ground (GroundItems): the item nearest you that the game saves (not one placed with the location)
+    // goes out in the game's save format and a copy is made from it, landed right where the first lies - as another game
+    // or a stash would make it. Then a wine is put at your feet with the game's hop, and its flight logged: what another
+    // game needs to fly its copy along the same arc (GroundItem.Fly).
+    private void CopyNearestItem(double x, double y)
+    {
+        var nearest = GroundItems.All()
+            .Where(item => !item.IsStatic)
+            .OrderBy(item => Math.Pow(item.X - x, 2) + Math.Pow(item.Y - y, 2))
+            .FirstOrDefault();
+        if (nearest.Instance.IsNone || nearest.ToJson() is not { } json)
+            _context.Log("No item on the ground here to copy (drop one first)");
+        else if (GroundItems.Create(json) is { } copy)
+            _context.Log($"Copied {copy.ObjectName} at ({copy.X}, {copy.Y}) from its save: {json}");
+        else
+            _context.Log($"Couldn't make an item from: {json}");
+        if (GroundItems.Spawn("wine", x, y, hop: true) is { Flight: { } flight })
+            _context.Log($"A wine hops from ({flight.X}, {flight.Y}) to ({flight.TargetX}, {flight.TargetY}): {flight.ToJson()}");
     }
 
     // The saved state of the location you're in (Locations): each room it has, and each room's presets - what will spawn
