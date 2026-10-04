@@ -2,6 +2,7 @@ using ExampleMod.Skills;
 using ExampleMod.Buffs;
 using ExampleMod.Items;
 using ExampleMod.UI;
+using System.Linq;
 using StoneForge;
 using StoneForge.Objects;
 
@@ -135,7 +136,7 @@ public class ExampleMod : IStoneMod, ITickable
 
     // Every frame (ITickable): F4 gives the player an ability point, F5 an Example Tonic, F6 an Example Shirt, F7 an
     // Example Blade; F8 shows or hides the notes; F2 clears every Example Tonic off the ground (ClearTonics); F9 lets an
-    // hour of game time pass; F10 logs where you are on the world map.
+    // hour of game time pass; F10 logs where you are on the world map; F11 logs this location's saved state.
     public void Tick(double deltaTime)
     {
         // GameMaker arrays and structs from C#, once each: our own, then the game's once we're in it.
@@ -174,12 +175,43 @@ public class ExampleMod : IStoneMod, ITickable
                 _context.Log($"  its dungeon: boss alive {dungeon["boss_alive"]}, open {dungeon["dungeon_is_open"]}, resets in {dungeon["dungeon_reset"]}, "
                     + $"{(dungeon.GetMap("saveGraphMap") is { } graphs ? graphs.Count : 0)} saved floor graph(s), values: {string.Join(", ", dungeon.Keys)}");
         }
+        if (Keyboard.Pressed(Keyboard.F11) && Locations.Here is var (locationTag, roomTag))
+            LogLocation(locationTag, roomTag);
         if (Keyboard.Pressed(Keyboard.F9) && Time.Available && !Game.IsBusy)
         {
             // (As play lets time pass: the hour's upkeep, and NPCs following the new time of day.)
             GameTime before = Time.Now;
             Time.Advance(60);
             _context.Log($"An hour passed: {before} ({before.OfDay}) -> {Time.Now} ({Time.OfDay})");
+        }
+    }
+
+    // The saved state of the location you're in (Locations): each room it has, and each room's presets - what will spawn
+    // afresh next time (its flags) and which kinds of entities it has saved. (The room you're in is saved as you leave.)
+    private void LogLocation(string locationTag, GmValue roomTag)
+    {
+        if (Locations.Get(locationTag) is not { } location)
+        {
+            _context.Log($"Location {locationTag}: nothing saved yet (you're in {roomTag}, saved as you leave it)");
+            return;
+        }
+        _context.Log($"Location {locationTag} (you're in {roomTag}): {location.Rooms.Count} room(s) saved");
+        foreach (GmValue tag in location.Rooms)
+        {
+            if (location.Room(tag) is not { } room)
+                continue;
+            foreach (GmValue presetTag in room.Presets)
+            {
+                if (room.Preset(presetTag) is not { } preset)
+                    continue;
+                string kinds = "nothing saved";
+                if (preset.Entities is { } entities)
+                {
+                    kinds = string.Join(", ", entities.Keys.Select(key => key.AsString));
+                    entities.Destroy();
+                }
+                _context.Log($"  {tag} / {presetTag}: flags {preset.Flags}; {kinds}");
+            }
         }
     }
 

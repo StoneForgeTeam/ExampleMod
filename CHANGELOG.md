@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- F11 logs the saved state of the location you're in (`Locations`): its rooms, and each preset's flags and the kinds of entities it has saved. Needs the StoneForge release with `Locations`.
 - Where you are on the world map (`WorldMap`): the clock's third line shows the location, the cell and the dungeon floor, and F10 logs the place string, the cell's seeds and its dungeon's values. Needs the StoneForge release with `WorldMap`.
 - A clock at the top of the screen in game (`UI/ClockPanel.cs`): the time, the time of day, the date and the turn, from `Time`. It lets clicks through, and the "Show the clock" setting turns it off.
 - F9 lets an hour of game time pass (`Time.Advance`), logging the time before and after; the in-game log line shows the time and turn (`Time.Now`, `Time.OfDay`, `Time.Turns`). Needs the StoneForge release with `Time`.
