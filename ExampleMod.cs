@@ -34,6 +34,12 @@ public class ExampleMod : IStoneMod, ITickable
         context.Log(settings.Greeting.Value);
         // Its own GML functions (GML\*.gml), called through the generated Gml class: Twice calls Add.
         context.Log($"GML: Twice(21) = {Gml.Twice(21)}, Add(20, 22) = {Gml.Add(20, 22)}");
+        // Saves (SaveSlots): each time the game saves, the character folder's info counts the saves made with the Example
+        // Mod on, and the save menu's header shows that count after the character's name.
+        SaveSlots.OnInfoSaving(context, (slot, info) =>
+            info["example_saves"] = (slot.Info?["example_saves"] is { Kind: GmKind.Real } count ? count.AsInt : 0) + 1);
+        SaveSlots.SetTitle(context, slot => slot.Info is { } info && info["example_saves"] is { Kind: GmKind.Real } count
+            ? $"{info.CharacterName ?? "?"} - {count.AsInt} save(s) with Example Mod" : null);
 
         // The panels, on the main menu's screen - shown (side by side) by the main menu button, and closed again
         // when the main menu goes.
@@ -178,6 +184,8 @@ public class ExampleMod : IStoneMod, ITickable
         }
         if (Keyboard.Pressed(Keyboard.F11) && Locations.Here is var (locationTag, roomTag))
             LogLocation(locationTag, roomTag);
+        if (Keyboard.Pressed(Keyboard.F3) && SaveData.Available)
+            LogSaves();
         if (Keyboard.Pressed(Keyboard.F12) && !Game.IsBusy && Instances.First<GameInstance>(GameObjectId.o_player) is { } me)
             CopyNearestItem(me.Instance["x"].AsReal, me.Instance["y"].AsReal);
         if (Keyboard.Pressed(Keyboard.F9) && Time.Available && !Game.IsBusy)
@@ -187,6 +195,25 @@ public class ExampleMod : IStoneMod, ITickable
             Time.Advance(60);
             _context.Log($"An hour passed: {before} ({before.OfDay}) -> {Time.Now} ({Time.OfDay})");
         }
+    }
+
+    // The game being played (SaveData): its save data's sections, the character's apart from the world's - and the saves
+    // on disk (SaveSlots): this character's folder and its saves, and every other folder.
+    private void LogSaves()
+    {
+        string? json = SaveData.ToJson();
+        _context.Log($"Save data: {json?.Length ?? 0} characters of JSON; the character's sections: {string.Join(", ", SaveData.CharacterSections)} "
+            + $"({SaveData.CharacterJson()?.Length ?? 0} characters); the world's: {string.Join(", ", SaveData.WorldSections)}");
+        if (SaveSlots.Current is { } slot)
+        {
+            _context.Log($"  This game's folder: {slot.Name} ({slot.Info?.CharacterName}), last save {SaveSlots.CurrentSave?.Name}");
+            foreach (var save in slot.Saves)
+                _context.Log($"    {save.Name} ({save.Kind}): {save.Info?.LocationTitleKey}, {save.Info?.SavedAt}");
+        }
+        else
+            _context.Log("  This game has no folder yet (never saved)");
+        foreach (var other in SaveSlots.All)
+            _context.Log($"  {other.Name}: {other.Info?.CharacterName ?? "?"}, saved {other.Info?.SavedAt}, {other.Saves.Count} save(s)");
     }
 
     // Items on the ground (GroundItems): the item nearest you that the game saves (not one placed with the location)
