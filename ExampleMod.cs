@@ -72,6 +72,10 @@ public class ExampleMod : IStoneMod, ITickable
         context.UI.MainMenu.Hidden += () => controls.Visible = panel.Visible = false;
         // And one over the game world, on the in-game screen, toggled with F8 (NotesPanel).
         _notes = context.UI.InGame.Add(new NotesPanel());
+        // The world's clock at the top of the screen (Time), unless the setting turns it off.
+        var clock = context.UI.InGame.Add(new ClockPanel());
+        clock.Visible = settings.ShowClock.Value;
+        settings.ShowClock.Changed += show => clock.Visible = show;
         // (On the side its setting says - and moved when it's changed.)
         _notes.Anchor = settings.NotesSide.Value == 0 ? UIAnchor.Left : UIAnchor.Right;
         settings.NotesSide.Changed += side => _notes.Anchor = side == 0 ? UIAnchor.Left : UIAnchor.Right;
@@ -130,7 +134,8 @@ public class ExampleMod : IStoneMod, ITickable
     private bool _shownValues, _shownGameValues;
 
     // Every frame (ITickable): F4 gives the player an ability point, F5 an Example Tonic, F6 an Example Shirt, F7 an
-    // Example Blade; F8 shows or hides the notes; F2 clears every Example Tonic off the ground (ClearTonics).
+    // Example Blade; F8 shows or hides the notes; F2 clears every Example Tonic off the ground (ClearTonics); F9 lets an
+    // hour of game time pass.
     public void Tick(double deltaTime)
     {
         // GameMaker arrays and structs from C#, once each: our own, then the game's once we're in it.
@@ -159,6 +164,13 @@ public class ExampleMod : IStoneMod, ITickable
             _context.Log(_context.Items.Give(_shirt) ? "Gave the Example Shirt" : "Couldn't give the Example Shirt (no player, or no room)");
         if (Keyboard.Pressed(Keyboard.F2) && Gm.InGame)
             ClearTonics();
+        if (Keyboard.Pressed(Keyboard.F9) && Time.Available && !Game.IsBusy)
+        {
+            // (As play lets time pass: the hour's upkeep, and NPCs following the new time of day.)
+            GameTime before = Time.Now;
+            Time.Advance(60);
+            _context.Log($"An hour passed: {before} ({before.OfDay}) -> {Time.Now} ({Time.OfDay})");
+        }
     }
 
     // Every Example Tonic lying on the ground in the room - the off-screen ones too, which the game has culled

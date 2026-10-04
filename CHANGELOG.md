@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- A clock at the top of the screen in game (`UI/ClockPanel.cs`): the time, the time of day, the date and the turn, from `Time`. It lets clicks through, and the "Show the clock" setting turns it off.
+- F9 lets an hour of game time pass (`Time.Advance`), logging the time before and after; the in-game log line shows the time and turn (`Time.Now`, `Time.OfDay`, `Time.Turns`). Needs the StoneForge release with `Time`.
 - Needs StoneForge 0.3.0.
 - Off-screen instances (StoneForge's culled instances):
   - The notepad (F8) counts the room's ground loot twice a second, the off-screen items too: `Instances.All(..., includeCulled: true)` and `IsCulled`.

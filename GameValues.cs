@@ -34,6 +34,8 @@ internal static class GameValues
         using (sprites)
             context.Log($"The game's arrays: global.playerSpriteArray has {sprites.Length} sprite rows: "
                 + string.Join(", ", sprites.Select(sprite => Game.CallBuiltin("sprite_get_name", sprite).AsString)));
+        // The world's clock.
+        context.Log($"The time: {Time.Now} ({Time.OfDay}), turn {Time.Turns}. F9 lets an hour pass.");
         // And an instance's alarms (alarm[0] to alarm[11]): steps until each goes off, -1 when it's off.
         if (Instances.First<GameInstance>(GameObjectId.o_player) is { } player)
             context.Log("The player's alarms: " + string.Join(", ", Enumerable.Range(0, Alarms.Count).Select(i => $"[{i}] {player.Alarm[i]}")));
