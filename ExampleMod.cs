@@ -135,7 +135,7 @@ public class ExampleMod : IStoneMod, ITickable
 
     // Every frame (ITickable): F4 gives the player an ability point, F5 an Example Tonic, F6 an Example Shirt, F7 an
     // Example Blade; F8 shows or hides the notes; F2 clears every Example Tonic off the ground (ClearTonics); F9 lets an
-    // hour of game time pass.
+    // hour of game time pass; F10 logs where you are on the world map.
     public void Tick(double deltaTime)
     {
         // GameMaker arrays and structs from C#, once each: our own, then the game's once we're in it.
@@ -164,6 +164,16 @@ public class ExampleMod : IStoneMod, ITickable
             _context.Log(_context.Items.Give(_shirt) ? "Gave the Example Shirt" : "Couldn't give the Example Shirt (no player, or no room)");
         if (Keyboard.Pressed(Keyboard.F2) && Gm.InGame)
             ClearTonics();
+        if (Keyboard.Pressed(Keyboard.F10) && WorldMap.Here is { } here)
+        {
+            // Where you are: the place as one string, the cell's location and seeds, and its dungeon if it has one.
+            var seeds = here.Seeds;
+            _context.Log($"World map: {WorldMap.Place}, cell {here.Tag} ({here.Location ?? "no location"}) of {WorldMap.Width} x {WorldMap.Height}; "
+                + $"seeds: layout {seeds.Layout}, mobs {seeds.Mobs}, preset {seeds.Preset}");
+            if (here.Dungeon is { } dungeon)
+                _context.Log($"  its dungeon: boss alive {dungeon["boss_alive"]}, open {dungeon["dungeon_is_open"]}, resets in {dungeon["dungeon_reset"]}, "
+                    + $"{(dungeon.GetMap("saveGraphMap") is { } graphs ? graphs.Count : 0)} saved floor graph(s), values: {string.Join(", ", dungeon.Keys)}");
+        }
         if (Keyboard.Pressed(Keyboard.F9) && Time.Available && !Game.IsBusy)
         {
             // (As play lets time pass: the hour's upkeep, and NPCs following the new time of day.)
