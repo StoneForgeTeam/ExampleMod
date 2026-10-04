@@ -19,7 +19,8 @@
   `Draw.SpriteExt` and the game's digit font (`GameFont.Digits`).
 - The mod's per-frame work is timed in StoneForge's profiler (Ctrl+Shift+P) as "world" (`Profiler.Measure`).
 - The twin (Shift+F12) is drawn with `Draw.SpriteExt`, and F4's ability point goes to `Player.Instance`.
-- Needs the StoneForge release after 0.5.0 (these APIs).
+- `"stoneforge": "latest"` in mod.json while in development: it's built against StoneForge as it is now. A release
+  names the StoneForge it was built against.
 - A twin (`CharacterLook`): Shift+F12 reads your look and draws a character built from it a tile to your right, its sprites made by the game's own compositor (`Build`). Shift+F12 again removes it. Needs the StoneForge release with `CharacterLook`.
 - Needs StoneForge 0.4.0.
 - Moving between screens (`Rooms`): F1 goes into the room you're in again, as a door to it would. Example Button -> Play Options has Load Newest Save (`Rooms.LoadSave`) and New Adventure (`Rooms.StartNew`). Needs the StoneForge release with `Rooms`.

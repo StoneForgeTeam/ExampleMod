@@ -4,7 +4,7 @@ The StoneForge sample mod: custom items, a tonic, buffs, skills, UI panels and G
 
 ## Requirements
 
-Install StoneForge on Stoneshard's VM modbranch: the version `mod.json` names, or newer (the newest parts need the release after 0.5.0). The editor project requires the .NET 10 SDK. StoneForge compiles the mod's source itself when loading it; the editor's compiled DLL is not installed.
+Install StoneForge on Stoneshard's VM modbranch. `mod.json` says `"stoneforge": "latest"` while the sample's in development: it's built against StoneForge's latest source, and any StoneForge loads it - its newest parts need the newest StoneForge. The editor project requires the .NET 10 SDK. StoneForge compiles the mod's source itself when loading it; the editor's compiled DLL is not installed.
 
 ## Edit and build
 
