@@ -4,5 +4,5 @@
   "version": "0.2.0",
   "author": "failmelon",
   "description": "Shows what C# mods can do: a main menu button and panels with the game's controls, its own weapon (F7 in game), armour (F6) and drink (F5), skills (Shock Bolt, and Storm Ward once it's learnt - F4 gives an ability point), a notepad over the game (F8), a badge on the HUD, Rest an Hour in the Esc menu, Inspect / Stun / Push on enemies' right-click menus, middle-click to walk, logs the player and every move.",
-  "stoneforge": "0.4.0"
+  "stoneforge": "0.5.0"
 }
