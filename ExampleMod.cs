@@ -25,6 +25,7 @@ public class ExampleMod : IStoneMod, ITickable
     private ExampleShirt _shirt = null!;
     private ExampleTonic _tonic = null!;
     private NotesPanel _notes = null!;
+    private ExampleWorld _world = null!;
 
     public void Load(ModContext context)
     {
@@ -98,6 +99,11 @@ public class ExampleMod : IStoneMod, ITickable
         // (On the side its setting says - and moved when it's changed.)
         _notes.Anchor = settings.NotesSide.Value == 0 ? UIAnchor.Left : UIAnchor.Right;
         settings.NotesSide.Changed += side => _notes.Anchor = side == 0 ? UIAnchor.Left : UIAnchor.Right;
+        // A badge on the game's HUD (HudBadge): under the game's windows, hidden with its HUD.
+        context.UI.Hud.Add(new HudBadge());
+        // The world through the game's own menus and the mouse (ExampleWorld): Rest an Hour in the Esc menu; Inspect,
+        // Stun and Push on an enemy's right-click menu; a middle click on the world.
+        _world = new ExampleWorld(context);
 
         // Two effects of our own (ExampleBuffs) and an item that uses them (ExampleBlade); F7 in game gives the
         // player one.
@@ -157,6 +163,8 @@ public class ExampleMod : IStoneMod, ITickable
     // hour of game time pass; F10 logs where you are on the world map; F11 logs this location's saved state.
     public void Tick(double deltaTime)
     {
+        // (Timed in StoneForge's profiler, Ctrl+Shift+P: listed under this mod as "world".)
+        Profiler.Measure(_context, "world", _world.Tick);
         // GameMaker arrays and structs from C#, once each: our own, then the game's once we're in it.
         if (!_shownValues)
         {
@@ -172,9 +180,9 @@ public class ExampleMod : IStoneMod, ITickable
             _notes.Visible = !_notes.Visible;
         if (Keyboard.Pressed(Keyboard.F7))
             _context.Log(_context.Items.Give(_blade) ? "Gave the Example Blade" : "Couldn't give the Example Blade (no player, or no room)");
-        if (Keyboard.Pressed(Keyboard.F4) && Instances.First<GameInstance>(GameObjectId.o_player) is { } player)
+        if (Keyboard.Pressed(Keyboard.F4) && Player.Exists)
         {
-            Game.CallScript("scr_atr_incr", player.Instance, "SP", 1);
+            Game.CallScript("scr_atr_incr", Player.Instance, "SP", 1);
             _context.Log("Gave an ability point");
         }
         if (Keyboard.Pressed(Keyboard.F5))
@@ -243,8 +251,8 @@ public class ExampleMod : IStoneMod, ITickable
             _context.Log($"Built the twin's sprites: {string.Join(", ", _twin.All)}");
         }
         // (Drawn as you are: your frame and facing, a tile to the right.)
-        Game.CallBuiltin("draw_sprite_ext", _twin.For(0, false), player["image_index"], player["x"].AsReal + 26, player["y"],
-            player["image_xscale"], player["image_yscale"], 0, Draw.White, 1);
+        Draw.SpriteExt(_twin.For(0, false), player["image_index"].AsReal, player["x"].AsReal + Units.CellSize, player["y"].AsReal,
+            player["image_xscale"].AsReal, player["image_yscale"].AsReal);
     }
 
     // The game being played (SaveData): its save data's sections, the character's apart from the world's - and the saves

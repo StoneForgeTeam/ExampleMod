@@ -2,6 +2,24 @@
 
 ## Unreleased
 
+- **The world through the game's own menus and the mouse** (`ExampleWorld.cs`):
+  - The Esc menu has **Rest an Hour** (`EscMenu`). It asks with the game's own confirmation (`GameDialogs.Confirm`),
+    holds the screen black with "Resting..." (`Blackout`) while an hour passes (`Time.Advance`), then fades back.
+  - An enemy's right-click menu has **Inspect**, **Stun** and **Push** (`ContextMenus`):
+    - Inspect logs the cell it stands on (`Units.CellOf`), its health, whether it's after you (`Player.IsHuntedBy`)
+      and the effects on it (`UnitEffects.On`).
+    - Stun puts the game's stun on it from you (`UnitEffects.Create`).
+    - Push moves it a cell away from you, onto the nearest free cell (`Units.NearestFreeCell`, `Units.Move`).
+  - A **middle click on the world** (`Mouse.ClickedWorld`: not on any window) logs the cell and who stands on it
+    (`Mouse.Cell`, `Mouse.Unit`), and walks you there if it's empty (`Player.WalkTo`). **Ctrl+middle click** goes out by
+    the nearest way out (`Doors`).
+- **A badge on the game's HUD** (`UI/HudBadge.cs`, `ModUI.Hud`), drawn under the game's windows and hidden with its HUD,
+  at the right edge. It shows your level and whether enemies are after you (`Player`), the icons of the effects on you
+  (`UnitEffects`), and the cell under the mouse with who's on it. It's drawn with `Draw.Frame`, `Draw.Circle`,
+  `Draw.SpriteExt` and the game's digit font (`GameFont.Digits`).
+- The mod's per-frame work is timed in StoneForge's profiler (Ctrl+Shift+P) as "world" (`Profiler.Measure`).
+- The twin (Shift+F12) is drawn with `Draw.SpriteExt`, and F4's ability point goes to `Player.Instance`.
+- Needs the StoneForge release after 0.5.0 (these APIs).
 - A twin (`CharacterLook`): Shift+F12 reads your look and draws a character built from it a tile to your right, its sprites made by the game's own compositor (`Build`). Shift+F12 again removes it. Needs the StoneForge release with `CharacterLook`.
 - Needs StoneForge 0.4.0.
 - Moving between screens (`Rooms`): F1 goes into the room you're in again, as a door to it would. Example Button -> Play Options has Load Newest Save (`Rooms.LoadSave`) and New Adventure (`Rooms.StartNew`). Needs the StoneForge release with `Rooms`.
