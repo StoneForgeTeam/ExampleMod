@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Items, containers and the game's events to try** (`ExampleInventory.cs`):
+  - A chest's right-click menu (any container in the world) has **Peek** (what's in it, read without opening it), **Stash a Tonic**, **Stash a Worn Blade** and **Take a Tonic**. They work open or closed: a closed chest has them saved in it, and a never-opened one stays unopened, with them joining its loot as it first opens.
+  - The Esc menu has **Give a Worn Blade**: the Example Blade at a quarter of its condition, marked with a value of ours (`Inventory.Add` with `setup`).
+  - Logged: containers opened and closed, items put in and taken out, gear put on and taken off, your skills used, and quests started, moving on, done and failed.
+  - The **Cheat death once** setting: the first time you'd die, you're left at a quarter of your health (`Player.OnDying`).
+- Logs each level you gain (`Player.OnLevelUp`) and each item you come to carry (`Inventory.OnAdded`).
 - Logs the rooms you go into (`Rooms.OnEntered`) and the units you kill (`Units.OnDied`). Needs the StoneForge release with these events.
 - The Esc menu has **Mark This Spot** (`MapMarkers`): a flag on the world map on the cell you're on, or, if one's there already, it comes off. The markers you place or take off on the map yourself are logged (`MapMarkers.OnPlaced`, `OnRemoved`). Needs the StoneForge release with `MapMarkers`.
 - Uses StoneForge's `Cell` (and `Point`) in place of `(x, y)` tuples: `Mouse.Cell`, `Units.CellOf`, `Units.NearestFreeCell`, `Player.WalkTo(cell)` and `Exits.Nearest(cell)`. Needs the StoneForge release with `Cell`.

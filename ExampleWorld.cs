@@ -10,8 +10,9 @@ namespace ExampleMod;
 // - and "Mark This Spot": a flag on the world map where you are (MapMarkers, WorldMap.PlayerCell) - or, if there's one
 //   on that cell already, it comes off; the markers you place or take off on the map yourself are logged (OnPlaced,
 //   OnRemoved);
-// - and some of the game's events, logged: each room you go into (Rooms.OnEntered), and each unit you kill
-//   (Units.OnDied, its killer you);
+// - and some of the game's events, logged: each room you go into (Rooms.OnEntered), each unit you kill
+//   (Units.OnDied, its killer you), each level you gain (Player.OnLevelUp) and each item you come to carry
+//   (Inventory.OnAdded);
 // - an enemy's right-click menu gets Inspect, Stun and Push (ContextMenus): Inspect logs where it stands (Units) and the
 //   effects on it (UnitEffects), Stun puts the game's stun on it from you (UnitEffects.Create), Push moves it a cell
 //   away from you, onto the nearest free one (Units.NearestFreeCell, Units.Move);
@@ -34,6 +35,8 @@ public sealed class ExampleWorld
         MapMarkers.OnPlaced(context, marker => context.Log($"You placed a {marker.Sprite} marker on {marker.Tile}"));
         MapMarkers.OnRemoved(context, marker => context.Log($"You took the {marker.Sprite} marker off {marker.Tile}"));
         Rooms.OnEntered(context, room => context.Log($"Entered {Rooms.CurrentName}"));
+        Player.OnLevelUp(context, level => context.Log($"Level {level}!"));
+        Inventory.OnAdded(context, item => context.Log($"You have {item.Name} x{item.Stack}"));
         Units.OnDied(context, (unit, killer) =>
         {
             if (!killer.IsNone && killer.Equals(Player.Instance))

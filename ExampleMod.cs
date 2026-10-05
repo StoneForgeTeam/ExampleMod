@@ -126,6 +126,9 @@ public class ExampleMod : IStoneMod, ITickable
         context.Skills.Add(new StormWard(focus, shockBolt));
         // And a passive (StaticCharge): +5% Crit Chance, and weapon hits may shock.
         context.Skills.Add(new StaticCharge(shocked));
+        // Items, containers and the game's events (ExampleInventory): Peek, Stash and Take on a chest's right-click menu;
+        // Give a Worn Blade in the Esc menu; containers, gear, skills and quests logged; cheating death once.
+        new ExampleInventory(context, settings, _tonic);
 
         // An object event, with the instance already as its class: player.HP, not player.Get("HP").
         Events.o_player.Step_0.After(context, player =>
