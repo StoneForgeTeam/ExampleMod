@@ -14,7 +14,10 @@ namespace ExampleMod;
 // - logged: containers opened and closed, items put in and taken out while they're open, gear put on and taken off,
 //   your skills used, and quests started, moving on, done and failed;
 // - with the "Cheat death once" setting, the first time you'd die you're left at a quarter of your health
-//   (Player.OnDying).
+//   (Player.OnDying);
+// - loot tables: every container's table may give an Example Tonic, a quarter of the time (LootTables.EditAll: from
+//   Load, applied as the game loads its tables), and Make It a Boss Chest on an unopened container's menu has it roll a
+//   tier 5 crypt boss chest's loot as it's first opened (Containers.SetLootTable).
 public sealed class ExampleInventory
 {
     private const string GivenKey = "examplemod:given";
@@ -37,6 +40,10 @@ public sealed class ExampleInventory
             hover: "Example Mod: put an Example Blade at a quarter of its condition in it");
         ContextMenus.Add(context, "Take a Tonic", IsContainer, chest => context.Log($"Took {Containers.RemoveItem(chest, _tonic)} tonic(s) out"),
             hover: "Example Mod: take an Example Tonic out of it");
+        LootTables.EditAll(context, _ => true, table => table.Add(_tonic, 25));
+        ContextMenus.Add(context, "Make It a Boss Chest", target => IsContainer(target) && !Containers.HasBeenOpened(target),
+            chest => Log(Containers.SetLootTable(chest, "cryptBossChest", 5), "It'll roll a crypt boss chest's loot", "Too late: it's been opened"),
+            hover: "Example Mod: it rolls a tier 5 crypt boss chest's loot as it's first opened");
         EscMenu.AddBefore(context, EscButton.Settings, "Give a Worn Blade", () =>
         {
             if (Inventory.Add<ExampleBlade>(setup: Wear) is { } blade)

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- **Loot tables** (`ExampleInventory.cs`): every container's loot table may give an Example Tonic, a quarter of the time (`LootTables.EditAll`), and **Make It a Boss Chest** on an unopened container's right-click menu has it roll a tier 5 crypt boss chest's loot (`Containers.SetLootTable`).
 - **Items, containers and the game's events to try** (`ExampleInventory.cs`):
   - A chest's right-click menu (any container in the world) has **Peek** (what's in it, read without opening it), **Stash a Tonic**, **Stash a Worn Blade** and **Take a Tonic**. They work open or closed: a closed chest has them saved in it, and a never-opened one stays unopened, with them joining its loot as it first opens.
   - The Esc menu has **Give a Worn Blade**: the Example Blade at a quarter of its condition, marked with a value of ours (`Inventory.Add` with `setup`).
