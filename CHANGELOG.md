@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Logs the rooms you go into (`Rooms.OnEntered`) and the units you kill (`Units.OnDied`). Needs the StoneForge release with these events.
+- The Esc menu has **Mark This Spot** (`MapMarkers`): a flag on the world map on the cell you're on, or, if one's there already, it comes off. The markers you place or take off on the map yourself are logged (`MapMarkers.OnPlaced`, `OnRemoved`). Needs the StoneForge release with `MapMarkers`.
 - Uses StoneForge's `Cell` (and `Point`) in place of `(x, y)` tuples: `Mouse.Cell`, `Units.CellOf`, `Units.NearestFreeCell`, `Player.WalkTo(cell)` and `Exits.Nearest(cell)`. Needs the StoneForge release with `Cell`.
 - **The world through the game's own menus and the mouse** (`ExampleWorld.cs`):
   - The Esc menu has **Rest an Hour** (`EscMenu`). It asks with the game's own confirmation (`GameDialogs.Confirm`),

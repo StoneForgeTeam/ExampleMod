@@ -7,6 +7,11 @@ namespace ExampleMod;
 // The game's world from C#, through the game's own menus and the mouse rather than more keys:
 // - the Esc menu gets "Rest an Hour" (EscMenu): it asks with the game's own confirmation (GameDialogs), then holds the
 //   screen black with a line of text (Blackout) while an hour passes (Time), and fades back;
+// - and "Mark This Spot": a flag on the world map where you are (MapMarkers, WorldMap.PlayerCell) - or, if there's one
+//   on that cell already, it comes off; the markers you place or take off on the map yourself are logged (OnPlaced,
+//   OnRemoved);
+// - and some of the game's events, logged: each room you go into (Rooms.OnEntered), and each unit you kill
+//   (Units.OnDied, its killer you);
 // - an enemy's right-click menu gets Inspect, Stun and Push (ContextMenus): Inspect logs where it stands (Units) and the
 //   effects on it (UnitEffects), Stun puts the game's stun on it from you (UnitEffects.Create), Push moves it a cell
 //   away from you, onto the nearest free one (Units.NearestFreeCell, Units.Move);
@@ -25,6 +30,15 @@ public sealed class ExampleWorld
     {
         _context = context;
         EscMenu.AddBefore(context, EscButton.Settings, "Rest an Hour", AskToRest);
+        EscMenu.AddBefore(context, EscButton.Settings, "Mark This Spot", MarkThisSpot);
+        MapMarkers.OnPlaced(context, marker => context.Log($"You placed a {marker.Sprite} marker on {marker.Tile}"));
+        MapMarkers.OnRemoved(context, marker => context.Log($"You took the {marker.Sprite} marker off {marker.Tile}"));
+        Rooms.OnEntered(context, room => context.Log($"Entered {Rooms.CurrentName}"));
+        Units.OnDied(context, (unit, killer) =>
+        {
+            if (!killer.IsNone && killer.Equals(Player.Instance))
+                context.Log($"You killed {unit.Get("name")}");
+        });
         ContextMenus.Add(context, "Inspect", IsEnemy, Inspect, hover: "Example Mod: log where it stands and its effects");
         ContextMenus.Add(context, "Stun", IsEnemy, Stun, hover: "Example Mod: stun it for 2 turns");
         ContextMenus.Add(context, "Push", IsEnemy, Push, hover: "Example Mod: push it a cell away from you");
@@ -59,6 +73,23 @@ public sealed class ExampleWorld
         }
         else
             _context.Log($"Cell {cell}: {Gm.ObjectGetName(unit.Get("object_index").AsInt)}{(Units.IsPlayer(unit) ? " (you)" : "")}");
+    }
+
+    private void MarkThisSpot()
+    {
+        if (WorldMap.PlayerCell is not { } here)
+            return;
+        var markers = MapMarkers.All();
+        if (markers.FirstOrDefault(m => m.Tile == here) is { Sprite: not null } mine)
+        {
+            MapMarkers.Remove(mine);
+            _context.Log($"Took the {mine.Sprite} marker off {here}");
+            return;
+        }
+        // (The cell's middle, in world-map pixels.)
+        var flag = new MapMarker(MapMarkers.Sprites[4], 0, new Point((here.X + 0.5) * MapMarkers.CellSize, (here.Y + 0.5) * MapMarkers.CellSize));
+        MapMarkers.Add(flag);
+        _context.Log($"Marked {here} on the world map ({markers.Count + 1} markers)");
     }
 
     private void AskToRest()
