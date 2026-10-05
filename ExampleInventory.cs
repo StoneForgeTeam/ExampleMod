@@ -20,8 +20,6 @@ namespace ExampleMod;
 //   tier 5 crypt boss chest's loot as it's first opened (Containers.SetLootTable).
 public sealed class ExampleInventory
 {
-    private const string GivenKey = "examplemod:given";
-
     private readonly ModContext _context;
     private readonly ExampleTonic _tonic;
     private int _container = -2;
@@ -47,7 +45,7 @@ public sealed class ExampleInventory
         EscMenu.AddBefore(context, EscButton.Settings, "Give a Worn Blade", () =>
         {
             if (Inventory.Add<ExampleBlade>(setup: Wear) is { } blade)
-                context.Log($"Gave a worn Example Blade: {blade.Durability:0}/{blade.MaxDurability:0}, ours: {blade.Data(GivenKey)}");
+                context.Log($"Gave a worn Example Blade: {blade.Durability:0}/{blade.MaxDurability:0}, ours: {blade.ModData(context)["given"]}");
             else
                 context.Log("Couldn't give a blade (no game, or no room: it's at your feet)");
         });
@@ -78,11 +76,12 @@ public sealed class ExampleInventory
         });
     }
 
-    // A worn blade: a quarter of its condition, and marked as given by us (its own data: kept and saved with it).
-    private static void Wear(InventoryItem blade)
+    // A worn blade: a quarter of its condition, and marked as given by us (a value of ours on it: ModData - kept and saved
+    // with it, under a key no other mod's can meet).
+    private void Wear(InventoryItem blade)
     {
         blade.DurabilityPercent = 25;
-        blade.SetData(GivenKey, true);
+        blade.ModData(_context)["given"] = true;
     }
 
     private void Peek(Instance chest)

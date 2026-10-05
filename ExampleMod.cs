@@ -35,6 +35,10 @@ public class ExampleMod : IStoneMod, ITickable
         context.Log(settings.Greeting.Value);
         // Its own GML functions (GML\*.gml), called through the generated Gml class: Twice calls Add.
         context.Log($"GML: Twice(21) = {Gml.Twice(21)}, Add(20, 22) = {Gml.Add(20, 22)}");
+        // The other mods running (context.Mods): those that loaded before this one. One named in mod.json's "requires" can
+        // be used by its own types - context.Mods.Get<TheirMod>("theirmod") - and is always loaded first.
+        var others = context.Mods.All.Where(m => m.Id != context.Id).Select(m => $"{m.Name} {m.Version}").ToList();
+        context.Log(others.Count == 0 ? "No other mods loaded before this one" : "Loaded before this one: " + string.Join(", ", others));
         // A twin (CharacterLook): Shift+F12 reads your look and draws a character built from it a tile to your right -
         // its sprites made by the game's own compositor, in o_player's Draw, where drawing to surfaces works.
         context.OnCode("gml_Object_o_player_Draw_0", after: (player, _) => DrawTwin(player));
@@ -158,6 +162,22 @@ public class ExampleMod : IStoneMod, ITickable
     // Switched off in the Mods window. What it registered through its context - panels, main menu buttons, items,
     // buffs, hooks, settings - is taken back for it; it changed nothing else in the game, so there's nothing to undo.
     public void Unload() => _context.Log("Switched off - goodbye!");
+
+    // ---- for other mods: what a mod that "requires": ["examplemod"] can use (context.Mods.Get<ExampleMod>) ----
+
+    /// <summary>How many mods have said hello (<see cref="Hello"/>).</summary>
+    public int Greetings { get; private set; }
+
+    /// <summary>Another mod says hello: logged, and the answer given back.</summary>
+    public string Hello(string from)
+    {
+        Greetings++;
+        _context.Log($"{from} says hello (greeting {Greetings})");
+        return $"Hello {from}, from {_context.Name}";
+    }
+
+    /// <summary>Gives the player an Example Tonic, for another mod; whether it could.</summary>
+    public bool GiveTonic() => _context.Items.Give(_tonic);
 
     private bool _shownValues, _shownGameValues;
 

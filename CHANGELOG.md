@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Logs the other mods loaded before it (`context.Mods`), and has a little API for mods that require it: `Hello(from)`, `Greetings` and `GiveTonic()` (see the ExampleAddon mod).
+- The worn blade's mark of ours is a `ModData` value (`blade.ModData(context)["given"]`), under a key no other mod's can meet.
 - **Loot tables** (`ExampleInventory.cs`): every container's loot table may give an Example Tonic, a quarter of the time (`LootTables.EditAll`), and **Make It a Boss Chest** on an unopened container's right-click menu has it roll a tier 5 crypt boss chest's loot (`Containers.SetLootTable`).
 - **Items, containers and the game's events to try** (`ExampleInventory.cs`):
   - A chest's right-click menu (any container in the world) has **Peek** (what's in it, read without opening it), **Stash a Tonic**, **Stash a Worn Blade** and **Take a Tonic**. They work open or closed: a closed chest has them saved in it, and a never-opened one stays unopened, with them joining its loot as it first opens.
