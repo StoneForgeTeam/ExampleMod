@@ -12,7 +12,7 @@ namespace ExampleMod;
 //   away from you, onto the nearest free one (Units.NearestFreeCell, Units.Move);
 // - a middle click on the world (Mouse.ClickedWorld - not on any window, and in the game's window) logs the cell and
 //   who stands on it (Mouse.Cell, Mouse.Unit), and walks you there if it's empty (Player.WalkTo); with Ctrl, you go out
-//   by the nearest way out instead (Doors).
+//   by the nearest way out instead (Exits).
 public sealed class ExampleWorld
 {
     private readonly ModContext _context;
@@ -45,9 +45,9 @@ public sealed class ExampleWorld
             return;
         if (Keyboard.Down(Keyboard.Control))
         {
-            Instance door = Doors.Nearest(Units.CellOf(Player.Instance));
+            Instance door = Exits.Nearest(Units.CellOf(Player.Instance));
             _context.Log(door.IsNone ? "No way out of here" : $"Leaving by {Gm.ObjectGetName(door.Get("object_index").AsInt)}");
-            Doors.Use(door);
+            Exits.Use(door);
             return;
         }
         Cell cell = Mouse.Cell;

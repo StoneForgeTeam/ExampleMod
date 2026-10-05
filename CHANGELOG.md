@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Uses StoneForge's `Cell` (and `Point`) in place of `(x, y)` tuples: `Mouse.Cell`, `Units.CellOf`, `Units.NearestFreeCell`, `Player.WalkTo(cell)` and `Doors.Nearest(cell)`. Needs the StoneForge release with `Cell`.
+- Uses StoneForge's `Cell` (and `Point`) in place of `(x, y)` tuples: `Mouse.Cell`, `Units.CellOf`, `Units.NearestFreeCell`, `Player.WalkTo(cell)` and `Exits.Nearest(cell)`. Needs the StoneForge release with `Cell`.
 - **The world through the game's own menus and the mouse** (`ExampleWorld.cs`):
   - The Esc menu has **Rest an Hour** (`EscMenu`). It asks with the game's own confirmation (`GameDialogs.Confirm`),
     holds the screen black with "Resting..." (`Blackout`) while an hour passes (`Time.Advance`), then fades back.
@@ -13,7 +13,7 @@
     - Push moves it a cell away from you, onto the nearest free cell (`Units.NearestFreeCell`, `Units.Move`).
   - A **middle click on the world** (`Mouse.ClickedWorld`: not on any window) logs the cell and who stands on it
     (`Mouse.Cell`, `Mouse.Unit`), and walks you there if it's empty (`Player.WalkTo`). **Ctrl+middle click** goes out by
-    the nearest way out (`Doors`).
+    the nearest way out (`Exits`, which was `Doors`).
 - **A badge on the game's HUD** (`UI/HudBadge.cs`, `ModUI.Hud`), drawn under the game's windows and hidden with its HUD,
   at the right edge. It shows your level and whether enemies are after you (`Player`), the icons of the effects on you
   (`UnitEffects`), and the cell under the mouse with who's on it. It's drawn with `Draw.Frame`, `Draw.Circle`,
