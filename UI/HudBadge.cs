@@ -40,9 +40,9 @@ public class HudBadge : UIElement
         if (effects.Count == 0)
             Draw.Text(x + 8, y + 22, "no effects", Draw.Muted);
         // The cell under the mouse, and who's on it.
-        var (cx, cy) = Mouse.Cell;
+        Cell cell = Mouse.Cell;
         Instance unit = Mouse.Unit;
         string who = unit.IsNone ? "" : Units.IsPlayer(unit) ? " - you" : " - " + Gm.ObjectGetName(unit.Get("object_index").AsInt).Replace("o_", "");
-        Draw.Text(x + 8, y + Height - 14, $"{cx}, {cy}{who}", Draw.Muted);
+        Draw.Text(x + 8, y + Height - 14, $"{cell}{who}", Draw.Muted);
     }
 }

@@ -45,21 +45,20 @@ public sealed class ExampleWorld
             return;
         if (Keyboard.Down(Keyboard.Control))
         {
-            var (px, py) = Units.CellOf(Player.Instance);
-            Instance door = Doors.Nearest(Units.PositionOf(px), Units.PositionOf(py));
+            Instance door = Doors.Nearest(Units.CellOf(Player.Instance));
             _context.Log(door.IsNone ? "No way out of here" : $"Leaving by {Gm.ObjectGetName(door.Get("object_index").AsInt)}");
             Doors.Use(door);
             return;
         }
-        var (x, y) = Mouse.Cell;
+        Cell cell = Mouse.Cell;
         Instance unit = Mouse.Unit;
         if (unit.IsNone)
         {
-            _context.Log($"Cell {x}, {y} is empty: walking there");
-            Player.WalkTo(Units.PositionOf(x), Units.PositionOf(y));
+            _context.Log($"Cell {cell} is empty: walking there");
+            Player.WalkTo(cell);
         }
         else
-            _context.Log($"Cell {x}, {y}: {Gm.ObjectGetName(unit.Get("object_index").AsInt)}{(Units.IsPlayer(unit) ? " (you)" : "")}");
+            _context.Log($"Cell {cell}: {Gm.ObjectGetName(unit.Get("object_index").AsInt)}{(Units.IsPlayer(unit) ? " (you)" : "")}");
     }
 
     private void AskToRest()
@@ -85,10 +84,10 @@ public sealed class ExampleWorld
 
     private void Inspect(Instance target)
     {
-        var (x, y) = Units.CellOf(target);
+        Cell cell = Units.CellOf(target);
         var effects = UnitEffects.On(target).Where(effect => effect.Shown)
             .Select(effect => $"{effect.Name} ({effect.Duration}{(effect.Harmful ? ", harmful" : "")})");
-        _context.Log($"{Gm.ObjectGetName(target.Get("object_index").AsInt)} at cell {x}, {y}: HP {target.Get("HP").AsReal:0.#}, "
+        _context.Log($"{Gm.ObjectGetName(target.Get("object_index").AsInt)} at cell {cell}: HP {target.Get("HP").AsReal:0.#}, "
             + $"{(Player.IsHuntedBy(target) ? "after you" : "not after you")}; effects: {string.Join(", ", effects.DefaultIfEmpty("none"))}");
     }
 
@@ -101,15 +100,14 @@ public sealed class ExampleWorld
     // A cell further from you, the nearest free one to it (walls and other units count), as a knockback would.
     private void Push(Instance target)
     {
-        var (px, py) = Units.CellOf(Player.Instance);
-        var (tx, ty) = Units.CellOf(target);
-        int dx = Math.Sign(tx - px), dy = Math.Sign(ty - py);
-        if (Units.NearestFreeCell(target, tx + dx, ty + dy) is not var (fx, fy) || (fx, fy) == (tx, ty) || !Units.CanTake(target, fx, fy))
+        Cell you = Units.CellOf(Player.Instance), from = Units.CellOf(target);
+        Cell away = from.Offset(Math.Sign(from.X - you.X), Math.Sign(from.Y - you.Y));
+        if (Units.NearestFreeCell(target, away) is not { } to || to == from || !Units.CanTake(target, to))
         {
             _context.Log("Nowhere to push it");
             return;
         }
-        Units.Move(target, fx, fy);
-        _context.Log($"Pushed it from {tx}, {ty} to {fx}, {fy}");
+        Units.Move(target, to);
+        _context.Log($"Pushed it from {from} to {to}");
     }
 }

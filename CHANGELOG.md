@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Uses StoneForge's `Cell` (and `Point`) in place of `(x, y)` tuples: `Mouse.Cell`, `Units.CellOf`, `Units.NearestFreeCell`, `Player.WalkTo(cell)` and `Doors.Nearest(cell)`. Needs the StoneForge release with `Cell`.
 - **The world through the game's own menus and the mouse** (`ExampleWorld.cs`):
   - The Esc menu has **Rest an Hour** (`EscMenu`). It asks with the game's own confirmation (`GameDialogs.Confirm`),
     holds the screen black with "Resting..." (`Blackout`) while an hour passes (`Time.Advance`), then fades back.

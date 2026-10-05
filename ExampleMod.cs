@@ -251,7 +251,7 @@ public class ExampleMod : IStoneMod, ITickable
             _context.Log($"Built the twin's sprites: {string.Join(", ", _twin.All)}");
         }
         // (Drawn as you are: your frame and facing, a tile to the right.)
-        Draw.SpriteExt(_twin.For(0, false), player["image_index"].AsReal, player["x"].AsReal + Units.CellSize, player["y"].AsReal,
+        Draw.SpriteExt(_twin.For(0, false), player["image_index"].AsReal, player["x"].AsReal + Cell.Size, player["y"].AsReal,
             player["image_xscale"].AsReal, player["image_yscale"].AsReal);
     }
 
