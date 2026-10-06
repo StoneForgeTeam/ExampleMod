@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- **No GML any more**: the `GML` folder (Twice, Add, CountNearbyEnemies) and the log line calling them are gone. A mod with GML can't load on the game's native build, which StoneForge is moving to.
 - Logs the other mods loaded before it (`context.Mods`), and has a little API for mods that require it: `Hello(from)`, `Greetings` and `GiveTonic()` (see the ExampleAddon mod).
 - The worn blade's mark of ours is a `ModData` value (`blade.ModData(context)["given"]`), under a key no other mod's can meet.
 - **Loot tables** (`ExampleInventory.cs`): every container's loot table may give an Example Tonic, a quarter of the time (`LootTables.EditAll`), and **Make It a Boss Chest** on an unopened container's right-click menu has it roll a tier 5 crypt boss chest's loot (`Containers.SetLootTable`).

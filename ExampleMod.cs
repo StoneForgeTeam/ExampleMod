@@ -33,8 +33,6 @@ public class ExampleMod : IStoneMod, ITickable
         // Its settings (ExampleSettings): on its page in the Mods window.
         var settings = new ExampleSettings(context.Settings);
         context.Log(settings.Greeting.Value);
-        // Its own GML functions (GML\*.gml), called through the generated Gml class: Twice calls Add.
-        context.Log($"GML: Twice(21) = {Gml.Twice(21)}, Add(20, 22) = {Gml.Add(20, 22)}");
         // The other mods running (context.Mods): those that loaded before this one. One named in mod.json's "requires" can
         // be used by its own types - context.Mods.Get<TheirMod>("theirmod") - and is always loaded first.
         var others = context.Mods.All.Where(m => m.Id != context.Id).Select(m => $"{m.Name} {m.Version}").ToList();

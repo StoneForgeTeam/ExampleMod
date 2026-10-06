@@ -20,16 +20,11 @@
       <HintPath>$(StoneForgeSdkDir)\StoneForge.API.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <!-- Its GML functions (GML folder) as C#: the generator makes ExampleMod.Gml from them, as the game does. -->
-    <Analyzer Include="$(StoneForgeSdkDir)\StoneForge.GmlGenerator.dll" />
   </ItemGroup>
 
   <Target Name="ValidateStoneForgeSdk" BeforeTargets="ResolveReferences">
-    <Error Condition="!Exists('$(StoneForgeSdkDir)\StoneForge.API.dll') or !Exists('$(StoneForgeSdkDir)\StoneForge.GmlGenerator.dll')"
+    <Error Condition="!Exists('$(StoneForgeSdkDir)\StoneForge.API.dll')"
            Text="Install StoneForge and set STONESHARD_DIR to the game folder, or pass -p:StoneForgeSdkDir=path-to-its-dotnet-folder." />
   </Target>
-  <ItemGroup>
-    <AdditionalFiles Include="GML\**\*.gml" />
-  </ItemGroup>
 
 </Project>
