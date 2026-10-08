@@ -15,8 +15,8 @@ public class ExampleTonic : Wine
     public ExampleTonic(BattleFocus focus) : base("tonic")
     {
         _focus = focus;
-        DisplayName = "Example Tonic";
-        Description = "A teal tonic made in C#: it soothes wounds and sharpens the mind - for a while.";
+        DisplayName = ExampleText.Get("items.exampletonic.example_tonic");
+        Description = ExampleText.Get("items.exampletonic.a_teal_tonic_made_in_c");
         InventorySprite = "tonic_inv.png";
         LootSprite = "tonic_loot.png";
         Set(ConsumableColumn.Health_Restoration, 15);
@@ -25,7 +25,7 @@ public class ExampleTonic : Wine
 
     protected override void OnUse(Instance item)
     {
-        if (Instances.First<GameInstance>(GameObject.o_player) is { } player)
+        if (Instances.First<GameInstance>(GameObjectId.o_player) is { } player)
             Context.Buffs.Apply(_focus, player, 5);
         Context.Log("Example Tonic drunk: focused for 5 turns");
     }

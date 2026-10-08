@@ -10,8 +10,8 @@ public class Shocked : ModBuff
 {
     public Shocked() : base("shocked", BuffKind.Debuff)
     {
-        DisplayName = "Shocked";
-        Description = "Sparks from an Example Blade. Less accurate and slower to dodge, and 3 damage at the start of each turn.";
+        DisplayName = ExampleText.Get("buffs.examplebuffs.shocked");
+        Description = ExampleText.Get("buffs.examplebuffs.sparks_from_an_example_blade_less");
         Icon = "shocked.png";
         Set(BuffStat.Hit_Chance, -15);
         Set(BuffStat.EVS, -10);
@@ -27,8 +27,8 @@ public class BattleFocus : ModBuff
 {
     public BattleFocus() : base("battle_focus")
     {
-        DisplayName = "Battle Focus";
-        Description = "The last kill sharpened your aim: more accurate, and more likely to land a critical hit.";
+        DisplayName = ExampleText.Get("buffs.examplebuffs.battle_focus");
+        Description = ExampleText.Get("buffs.examplebuffs.the_last_kill_sharpened_your_aim");
         Icon = "focus.png";
         Set(BuffStat.Hit_Chance, 10);
         Set(BuffStat.CRT, 5);

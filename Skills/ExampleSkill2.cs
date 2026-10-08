@@ -15,11 +15,11 @@ public class StormWard : StaticField
     public StormWard(BattleFocus focus, ShockBolt shockBolt) : base("storm_ward")
     {
         _focus = focus;
-        DisplayName = "Storm Ward";
-        Description = "Gathers the storm around you: Battle Focus for 5 turns.";
+        DisplayName = ExampleText.Get("skills.exampleskill2.storm_ward");
+        Description = ExampleText.Get("skills.exampleskill2.gathers_the_storm_around_you_battle");
         Icon = "storm_ward.png";
-        Tab = "Stormcalling";
-        Group = "Sorcery";
+        Tab = ExampleText.Get("skills.exampleskill.stormcalling");
+        Group = ExampleText.Get("skills.exampleskill2.sorcery");
         Cooldown = 12;
         EnergyCost = 15;
         // What it takes to learn it (besides an ability point).

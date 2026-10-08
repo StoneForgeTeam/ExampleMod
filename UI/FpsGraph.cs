@@ -31,6 +31,6 @@ public class FpsGraph : UIElement
         }
         Draw.Rectangle(x, y, x + Width - 1, y + Height - 1, Draw.Rgb(74, 66, 86), outline: true);
         double average = _frames.Count > 0 && total > 0 ? _frames.Count / total : 0;
-        Draw.Text(x + 4, y + 3, $"{average:0} fps", Draw.White);
+        Draw.Text(x + 4, y + 3, ExampleText.Get("ui.fpsgraph.fps", average), Draw.White);
     }
 }

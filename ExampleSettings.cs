@@ -13,10 +13,10 @@ public sealed class ExampleSettings
 
     public ExampleSettings(ModSettings settings)
     {
-        Sparks = settings.Toggle("sparks", "Sparks on crits", true, "Whether the Example Blade's crits spark - for 5 more damage.");
-        ShockChance = settings.Slider("shockChance", "Shock chance", 33, min: 0, max: 100, step: 1, tooltip: "How often a hit with the Example Blade shocks its target.");
+        Sparks = settings.Toggle("sparks", ExampleText.Get("examplesettings.sparks_on_crits"), true, ExampleText.Get("examplesettings.whether_the_example_blade_s_crits"));
+        ShockChance = settings.Slider("shockChance", ExampleText.Get("examplesettings.shock_chance"), 33, min: 0, max: 100, step: 1, tooltip: ExampleText.Get("examplesettings.how_often_a_hit_with_the"));
         ShockChance.Format = value => $"{value:0}%";
-        NotesSide = settings.Choice("notesSide", "Notepad side", new[] { "Left", "Right" }, tooltip: "Which side of the screen the notepad (F8 in game) is on.");
-        Greeting = settings.Text("greeting", "Greeting", "Hello from C#!", tooltip: "Logged when the mod loads, and by the Example window's Say hello.");
+        NotesSide = settings.Choice("notesSide", ExampleText.Get("examplesettings.notepad_side"), new[] { "Left", "Right" }, tooltip: ExampleText.Get("examplesettings.which_side_of_the_screen_the"));
+        Greeting = settings.Text("greeting", ExampleText.Get("examplesettings.greeting"), ExampleText.Get("examplesettings.hello_from_c"), tooltip: ExampleText.Get("examplesettings.logged_when_the_mod_loads_and"));
     }
 }

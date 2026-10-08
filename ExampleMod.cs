@@ -27,6 +27,7 @@ public class ExampleMod : IStoneMod, ITickable
     public void Load(ModContext context)
     {
         _context = context;
+        ExampleText.Initialize(context);
         // Its settings (ExampleSettings): on its page in the Mods window.
         var settings = new ExampleSettings(context.Settings);
         context.Log(settings.Greeting.Value);
@@ -38,11 +39,11 @@ public class ExampleMod : IStoneMod, ITickable
         var panel = context.UI.MainMenu.Add(new ExamplePanel(context.Manifest, context.LoadSprite("icon.png")));
         var controls = context.UI.MainMenu.Add(new ControlsPanel());
         // (The two go together: the button opens both unless both are open, the panel's Close closes both.)
-        MainMenu.AddButton(context, "Example", () => controls.Visible = panel.Visible = !(panel.Visible && controls.Visible));
+        MainMenu.AddButton(context, () => ExampleText.Get("examplemod.example"), () => controls.Visible = panel.Visible = !(panel.Visible && controls.Visible));
         panel.Closed += () => controls.Visible = false;
         // And a window in the game's look (ExampleWindow), on the main menu's screen too.
         var window = context.UI.MainMenu.Add(new ExampleWindow(context, settings));
-        MainMenu.AddButton(context, "Example Window", window.Open);
+        MainMenu.AddButton(context, () => ExampleText.Get("examplemod.example_window"), window.Open);
         context.UI.MainMenu.Hidden += () => controls.Visible = panel.Visible = false;
         // And one over the game world, on the in-game screen, toggled with F8 (NotesPanel).
         _notes = context.UI.InGame.Add(new NotesPanel());
@@ -107,7 +108,7 @@ public class ExampleMod : IStoneMod, ITickable
             _notes.Visible = !_notes.Visible;
         if (Keyboard.Pressed(Keyboard.F7))
             _context.Log(_context.Items.Give(_blade) ? "Gave the Example Blade" : "Couldn't give the Example Blade (no player, or no room)");
-        if (Keyboard.Pressed(Keyboard.F4) && Instances.First<GameInstance>(GameObject.o_player) is { } player)
+        if (Keyboard.Pressed(Keyboard.F4) && Instances.First<GameInstance>(GameObjectId.o_player) is { } player)
         {
             Game.CallScript("scr_atr_incr", player.Instance, "SP", 1);
             _context.Log("Gave an ability point");

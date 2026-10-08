@@ -12,10 +12,10 @@ public class NotesPanel : UIPanel
     {
         Visible = false;
         Framed = true;
-        Add(new UILabel("Notes", 10, 8));
-        var note = Add(new UITextBox(10, 28, 200, placeholder: "Write a note...") { MaxLength = 40, Tooltip = "Type here: the game's hotkeys stay quiet while you do." });
+        Add(ExampleText.Live(new UILabel(ExampleText.Get("ui.notespanel.notes"), 10, 8), live => { live.Text = ExampleText.Get("ui.notespanel.notes"); }));
+        var note = Add(ExampleText.Live(new UITextBox(10, 28, 200, placeholder: ExampleText.Get("ui.notespanel.write_a_note")) { MaxLength = 40, Tooltip = ExampleText.Get("ui.notespanel.type_here_the_game_s_hotkeys") }, live => { live.Placeholder = ExampleText.Get("ui.notespanel.write_a_note"); live.Tooltip = ExampleText.Get("ui.notespanel.type_here_the_game_s_hotkeys"); }));
         _saved = Add(new UILabel("", 10, 50, Draw.Muted));
-        note.Submitted += text => _saved.Text = text.Length == 0 ? "" : $"Noted: {text}";
-        Add(new UIButton("Close", 10, 0, 80, onClick: () => Visible = false) { Anchor = UIAnchor.BottomRight, Y = 8 });
+        note.Submitted += text => _saved.Text = text.Length == 0 ? "" : ExampleText.Get("ui.notespanel.noted", text);
+        Add(ExampleText.Live(new UIButton(ExampleText.Get("ui.examplepanel.close"), 10, 0, 80, onClick: () => Visible = false) { Anchor = UIAnchor.BottomRight, Y = 8 }, live => { live.Text = ExampleText.Get("ui.examplepanel.close"); }));
     }
 }

@@ -10,7 +10,7 @@ public class ExampleShirt : LinenShirt
 {
     public ExampleShirt() : base("Example Shirt")
     {
-        Description = "A linen shirt dyed blue in C#. It wards off a little magic.";
+        Description = ExampleText.Get("items.exampleshirt.a_linen_shirt_dyed_blue_in");
         InventorySprite = "shirt_inv.png";
         InventoryFrames = 2;
         LootSprite = "shirt_loot.png";

@@ -16,12 +16,12 @@ public class ShockBolt : ChainLightning
     public ShockBolt(Shocked shocked) : base("shock_bolt")
     {
         _shocked = shocked;
-        DisplayName = "Shock Bolt";
-        Description = "A bolt made in C#: it leaves its target Shocked for 4 turns.";
+        DisplayName = ExampleText.Get("skills.exampleskill.shock_bolt");
+        Description = ExampleText.Get("skills.exampleskill.a_bolt_made_in_c_it");
         Icon = "shock_bolt.png";
         // Its place in the skills menu (by default: a tab named after the mod, under MODS).
-        Tab = "Stormcalling";
-        Group = "Example";
+        Tab = ExampleText.Get("skills.exampleskill.stormcalling");
+        Group = ExampleText.Get("examplemod.example");
         Cooldown = 8;
         EnergyCost = 20;
     }

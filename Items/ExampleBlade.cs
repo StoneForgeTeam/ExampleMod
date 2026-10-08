@@ -19,7 +19,7 @@ public class ExampleBlade : DrifterSword
         _shocked = shocked;
         _focus = focus;
         _settings = settings;
-        Description = "A blade made in C#. Its blows can shock, it rewards a kill with focus, and it mends itself while you carry it.";
+        Description = ExampleText.Get("items.exampleblade.a_blade_made_in_c_its");
         InventorySprite = "blade_inv.png";
         LootSprite = "blade_loot.png";
         Set(WeaponColumn.Slashing_Damage, 40);

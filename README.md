@@ -4,7 +4,7 @@ The StoneForge sample mod: custom items, a tonic, buffs, skills, UI panels and G
 
 ## Requirements
 
-Install StoneForge 0.1.0 or newer on Stoneshard's VM modbranch. The editor project requires the .NET 10 SDK. StoneForge compiles the mod's source itself when loading it; the editor's compiled DLL is not installed.
+Install StoneForge 0.8.0 with localization support or newer on Stoneshard's VM modbranch. The editor project requires the .NET 10 SDK. StoneForge compiles the mod's source itself when loading it; the editor's compiled DLL is not installed.
 
 ## Edit and build
 
@@ -26,3 +26,26 @@ Close the game. Copy `mod.json`, the C# source folders, `Assets` and `GML` into 
 This mod changes game behavior: it demonstrates custom equipment and skills, displays level 99, and adds controls and panels. Use a test save. GML executes directly in the game and requires a restart after changes.
 
 The sample has its own version in `mod.json` and the editor project. Its minimum loader version is declared in `mod.json`. See the main repository's `docs/MODS.md` and `docs/GML.md` for API and binding guidance.
+
+## Localization
+
+Requires the StoneForge 0.8.0 build with the localization API. Install the `Localization`
+folder with this mod's source and Assets. US English lives in `Localization/en-US.json`;
+add another culture file (for example `fr.json`) with the same keys to translate it.
+
+`ExampleText` delegates to `context.Localization.Get`, initialized at the beginning of
+Load before any settings, items, buffs, skills or panels are constructed. Display text
+uses translation keys; identifiers, asset paths, logs and saved choice values stay stable.
+Numbered placeholders can be reordered without changing the C# code.
+
+`ExampleWindow` demonstrates `context.Localization.TranslationsChanged`: it rebuilds an
+open window while preserving its selected tab. Text drawn each frame (such as FPS)
+uses the current language automatically. Bound panels and main-menu buttons refresh when you change the game language or
+save an edit to a loaded translation file (within half a second). `ExampleText.Live`
+shows how to bind control text and tooltips without resetting their values.
+Registered content and settings definitions still take their text when the mod loads;
+reload the mod to update those. Invalid JSON while editing keeps the last valid text.
+The Left/Right setting values remain English because StoneForge saves choices by text.
+
+The English catalog preserves the existing wording. This sample does not translate
+third-party mods, engine object names, user-entered notes or diagnostic log messages.
