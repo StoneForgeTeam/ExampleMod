@@ -2,7 +2,7 @@ using StoneForge;
 
 namespace ExampleMod.UI;
 
-// A window as the game's Settings menu (a UISettingsWindow): tabs down the left, a scrolling page for each, and buttons
+// A window as the game's Settings menu (a UISettingsWindow - StoneForge's UIWindow laid out like it): tabs down the left, a scrolling page for each, and buttons
 // along the bottom. Built when it opens (OnOpen), its page filled for the tab opened (OnTabOpened) - with any
 // UI element, our own FpsGraph too. On the main menu's screen, opened by its "Example Window" button.
 public class ExampleWindow : UISettingsWindow

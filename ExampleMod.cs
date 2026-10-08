@@ -2,6 +2,8 @@ using ExampleMod.Skills;
 using ExampleMod.Buffs;
 using ExampleMod.Items;
 using ExampleMod.UI;
+using System;
+using System.Linq;
 using StoneForge;
 using StoneForge.Objects;
 
@@ -23,6 +25,7 @@ public class ExampleMod : IStoneMod, ITickable
     private ExampleShirt _shirt = null!;
     private ExampleTonic _tonic = null!;
     private NotesPanel _notes = null!;
+    private ExampleWorld _world = null!;
 
     public void Load(ModContext context)
     {
@@ -31,25 +34,79 @@ public class ExampleMod : IStoneMod, ITickable
         // Its settings (ExampleSettings): on its page in the Mods window.
         var settings = new ExampleSettings(context.Settings);
         context.Log(settings.Greeting.Value);
-        // Its own GML functions (GML\*.gml), called through the generated Gml class: Twice calls Add.
-        context.Log($"GML: Twice(21) = {Gml.Twice(21)}, Add(20, 22) = {Gml.Add(20, 22)}");
+        // The other mods running (context.Mods): those that loaded before this one. One named in mod.json's "requires" can
+        // be used by its own types - context.Mods.Get<TheirMod>("theirmod") - and is always loaded first.
+        var others = context.Mods.All.Where(m => m.Id != context.Id).Select(m => $"{m.Name} {m.Version}").ToList();
+        context.Log(others.Count == 0 ? "No other mods loaded before this one" : "Loaded before this one: " + string.Join(", ", others));
+        // A twin (CharacterLook): Shift+F12 reads your look and draws a character built from it a tile to your right -
+        // its sprites made by the game's own compositor, in o_player's Draw, where drawing to surfaces works.
+        context.OnCode("gml_Object_o_player_Draw_0", after: (player, _) => DrawTwin(player));
+        // Saves (SaveSlots): each time the game saves, the character folder's info counts the saves made with the Example
+        // Mod on, and the save menu's header shows that count after the character's name.
+        SaveSlots.OnInfoSaving(context, (slot, info) =>
+            info["example_saves"] = (slot.Info?["example_saves"] is { Kind: GmKind.Real } count ? count.AsInt : 0) + 1);
+        SaveSlots.SetTitle(context, slot => slot.Info is { } info && info["example_saves"] is { Kind: GmKind.Real } count
+            ? $"{info.CharacterName ?? "?"} - {count.AsInt} save(s) with Example Mod" : null);
 
         // The panels, on the main menu's screen - shown (side by side) by the main menu button, and closed again
         // when the main menu goes.
         var panel = context.UI.MainMenu.Add(new ExamplePanel(context.Manifest, context.LoadSprite("icon.png")));
         var controls = context.UI.MainMenu.Add(new ControlsPanel());
         // (The two go together: the button opens both unless both are open, the panel's Close closes both.)
-        MainMenu.AddButton(context, () => ExampleText.Get("examplemod.example"), () => controls.Visible = panel.Visible = !(panel.Visible && controls.Visible));
         panel.Closed += () => controls.Visible = false;
         // And a window in the game's look (ExampleWindow), on the main menu's screen too.
         var window = context.UI.MainMenu.Add(new ExampleWindow(context, settings));
-        MainMenu.AddButton(context, () => ExampleText.Get("examplemod.example_window"), window.Open);
+        // And windows in other frames (ExampleDialogs): the game's confirm panel, and the same frame 9-sliced bigger.
+        var sliced = context.UI.MainMenu.Add(new ExampleSlicedWindow());
+        var confirm = context.UI.MainMenu.Add(new ExampleConfirmWindow(context, sliced));
+
+        // (Placed by name: just under the game's Play button - "Start" names it too, or the text shown on a button.)
+
+        MainMenu.AddAfter(context, VanillaButton.Credits, () => ExampleText.Get("examplemod.example_button"), () =>
+        {
+            MainMenu.ClearButtons(context);
+            MainMenu.AddButton(context, VanillaButton.Play);
+            MainMenu.AddAfter(context, VanillaButton.Play, () => ExampleText.Get("examplemod.example_window"), window.Open);
+            MainMenu.AddButton(context, () => ExampleText.Get("examplemod.example"), () => controls.Visible = panel.Visible = !(panel.Visible && controls.Visible));
+            MainMenu.AddButton(context, () => ExampleText.Get("examplemod.window_styles"), confirm.Open);
+            // A menu in this one: the game's play screen buttons, each doing what it does there.
+            MainMenu.AddButton(context, () => ExampleText.Get("examplemod.play_options"), () =>
+            {
+                MainMenu.ClearButtons(context);
+                MainMenu.AddButton(context, VanillaButton.Continue);
+                MainMenu.AddButton(context, VanillaButton.NewGame);
+                MainMenu.AddButton(context, VanillaButton.LoadGame);
+                MainMenu.AddButton(context, VanillaButton.Prologue);
+                MainMenu.AddButton(context, VanillaButton.Adventure);
+                // The same moves made from C# (Rooms): the newest save loaded as the save menu loads it, and a new
+                // adventure started as the game's button starts one.
+                MainMenu.AddButton(context, () => ExampleText.Get("examplemod.load_newest_save"), () =>
+                {
+                    var newest = SaveSlots.All.SelectMany(slot => slot.Saves.Take(1)).FirstOrDefault();
+                    context.Log(newest == null ? "No save to load" : Rooms.LoadSave(newest) ? $"Loading {newest.Slot.Name}/{newest.Name}" : "Couldn't load it now");
+                });
+                MainMenu.AddButton(context, () => ExampleText.Get("examplemod.new_adventure"), () => context.Log(Rooms.StartNew() ? "Starting a new adventure" : "Couldn't start one now"));
+                MainMenu.AddButton(context, VanillaButton.Back);
+            });
+            // (The game's Back: the main menu as it started.)
+            MainMenu.AddButton(context, VanillaButton.Back);
+        });
+
         context.UI.MainMenu.Hidden += () => controls.Visible = panel.Visible = false;
         // And one over the game world, on the in-game screen, toggled with F8 (NotesPanel).
         _notes = context.UI.InGame.Add(new NotesPanel());
+        // The world's clock at the top of the screen (Time), unless the setting turns it off.
+        var clock = context.UI.InGame.Add(new ClockPanel());
+        clock.Visible = settings.ShowClock.Value;
+        settings.ShowClock.Changed += show => clock.Visible = show;
         // (On the side its setting says - and moved when it's changed.)
         _notes.Anchor = settings.NotesSide.Value == 0 ? UIAnchor.Left : UIAnchor.Right;
         settings.NotesSide.Changed += side => _notes.Anchor = side == 0 ? UIAnchor.Left : UIAnchor.Right;
+        // A badge on the game's HUD (HudBadge): under the game's windows, hidden with its HUD.
+        context.UI.Hud.Add(new HudBadge());
+        // The world through the game's own menus and the mouse (ExampleWorld): Rest an Hour in the Esc menu; Inspect,
+        // Stun and Push on an enemy's right-click menu; a middle click on the world.
+        _world = new ExampleWorld(context);
 
         // Two effects of our own (ExampleBuffs) and an item that uses them (ExampleBlade); F7 in game gives the
         // player one.
@@ -65,11 +122,16 @@ public class ExampleMod : IStoneMod, ITickable
         // And a consumable (ExampleTonic): a drink of our own; F5 gives one.
         _tonic = new ExampleTonic(focus);
         context.Items.Add(_tonic);
-        // And skills (ExampleSkill, ExampleSkill2): Shock Bolt, on its tab of the skills menu, and Storm Ward, learnt
+        // And skills (ExampleSkill, ExampleSkill2, StaticCharge): Shock Bolt, on its tab of the skills menu, and Storm Ward, learnt
         // once Shock Bolt is (and more); F4 gives an ability point.
         var shockBolt = new ShockBolt(shocked);
         context.Skills.Add(shockBolt);
         context.Skills.Add(new StormWard(focus, shockBolt));
+        // And a passive (StaticCharge): +5% Crit Chance, and weapon hits may shock.
+        context.Skills.Add(new StaticCharge(shocked));
+        // Items, containers and the game's events (ExampleInventory): Peek, Stash and Take on a chest's right-click menu;
+        // Give a Worn Blade in the Esc menu; containers, gear, skills and quests logged; cheating death once.
+        new ExampleInventory(context, settings, _tonic);
 
         // An object event, with the instance already as its class: player.HP, not player.Get("HP").
         Events.o_player.Step_0.After(context, player =>
@@ -100,22 +162,206 @@ public class ExampleMod : IStoneMod, ITickable
     // buffs, hooks, settings - is taken back for it; it changed nothing else in the game, so there's nothing to undo.
     public void Unload() => _context.Log("Switched off - goodbye!");
 
+    // ---- for other mods: what a mod that "requires": ["examplemod"] can use (context.Mods.Get<ExampleMod>) ----
+
+    /// <summary>How many mods have said hello (<see cref="Hello"/>).</summary>
+    public int Greetings { get; private set; }
+
+    /// <summary>Another mod says hello: logged, and the answer given back.</summary>
+    public string Hello(string from)
+    {
+        Greetings++;
+        _context.Log($"{from} says hello (greeting {Greetings})");
+        return $"Hello {from}, from {_context.Name}";
+    }
+
+    /// <summary>Gives the player an Example Tonic, for another mod; whether it could.</summary>
+    public bool GiveTonic() => _context.Items.Give(_tonic);
+
+    private bool _shownValues, _shownGameValues;
+
     // Every frame (ITickable): F4 gives the player an ability point, F5 an Example Tonic, F6 an Example Shirt, F7 an
-    // Example Blade; F8 shows or hides the notes.
+    // Example Blade; F8 shows or hides the notes; F2 clears every Example Tonic off the ground (ClearTonics); F9 lets an
+    // hour of game time pass; F10 logs where you are on the world map; F11 logs this location's saved state.
     public void Tick(double deltaTime)
     {
+        // (Timed in StoneForge's profiler, Ctrl+Shift+P: listed under this mod as "world".)
+        Profiler.Measure(_context, "world", _world.Tick);
+        // GameMaker arrays and structs from C#, once each: our own, then the game's once we're in it.
+        if (!_shownValues)
+        {
+            _shownValues = true;
+            GameValues.ShowMade(_context);
+        }
+        if (!_shownGameValues && Gm.InGame)
+        {
+            _shownGameValues = true;
+            GameValues.ShowGames(_context);
+        }
         if (Keyboard.Pressed(Keyboard.F8) && _context.UI.InGame.IsActive)
             _notes.Visible = !_notes.Visible;
         if (Keyboard.Pressed(Keyboard.F7))
             _context.Log(_context.Items.Give(_blade) ? "Gave the Example Blade" : "Couldn't give the Example Blade (no player, or no room)");
-        if (Keyboard.Pressed(Keyboard.F4) && Instances.First<GameInstance>(GameObjectId.o_player) is { } player)
+        if (Keyboard.Pressed(Keyboard.F4) && Player.Exists)
         {
-            Game.CallScript("scr_atr_incr", player.Instance, "SP", 1);
+            Game.CallScript("scr_atr_incr", Player.Instance, "SP", 1);
             _context.Log("Gave an ability point");
         }
         if (Keyboard.Pressed(Keyboard.F5))
             _context.Log(_context.Items.Give(_tonic) ? "Gave an Example Tonic" : "Couldn't give the Example Tonic (no player, or no room)");
         if (Keyboard.Pressed(Keyboard.F6))
             _context.Log(_context.Items.Give(_shirt) ? "Gave the Example Shirt" : "Couldn't give the Example Shirt (no player, or no room)");
+        if (Keyboard.Pressed(Keyboard.F2) && Gm.InGame)
+            ClearTonics();
+        if (Keyboard.Pressed(Keyboard.F10) && WorldMap.Here is { } here)
+        {
+            // Where you are: the place as one string, the cell's location and seeds, and its dungeon if it has one.
+            var seeds = here.Seeds;
+            _context.Log($"World map: {WorldMap.Place}, cell {here.Tag} ({here.Location ?? "no location"}) of {WorldMap.Width} x {WorldMap.Height}; "
+                + $"seeds: layout {seeds.Layout}, mobs {seeds.Mobs}, preset {seeds.Preset}");
+            if (here.Dungeon is { } dungeon)
+                _context.Log($"  its dungeon: boss alive {dungeon["boss_alive"]}, open {dungeon["dungeon_is_open"]}, resets in {dungeon["dungeon_reset"]}, "
+                    + $"{(dungeon.GetMap("saveGraphMap") is { } graphs ? graphs.Count : 0)} saved floor graph(s), values: {string.Join(", ", dungeon.Keys)}");
+        }
+        if (Keyboard.Pressed(Keyboard.F11) && Locations.Here is var (locationTag, roomTag))
+            LogLocation(locationTag, roomTag);
+        // F1 goes into the room you're in again, as a door to it would (Rooms.Change: the room saved, a fade, the room
+        // built again from its save).
+        if (Keyboard.Pressed(Keyboard.F1) && !Game.IsBusy && Gm.InGame)
+            _context.Log(Rooms.Change(Rooms.Current) ? $"Going into {Rooms.CurrentName} again" : "Couldn't change rooms now");
+        if (Keyboard.Pressed(Keyboard.F3) && SaveData.Available)
+            LogSaves();
+        if (Keyboard.Down(Keyboard.Shift) && Keyboard.Pressed(Keyboard.F12))
+            ToggleTwin();
+        else if (Keyboard.Pressed(Keyboard.F12) && !Game.IsBusy && Instances.First<GameInstance>(GameObjectId.o_player) is { } me)
+            CopyNearestItem(me.Instance["x"].AsReal, me.Instance["y"].AsReal);
+        if (Keyboard.Pressed(Keyboard.F9) && Time.Available && !Game.IsBusy)
+        {
+            // (As play lets time pass: the hour's upkeep, and NPCs following the new time of day.)
+            GameTime before = Time.Now;
+            Time.Advance(60);
+            _context.Log($"An hour passed: {before} ({before.OfDay}) -> {Time.Now} ({Time.OfDay})");
+        }
+    }
+
+    // The twin's look (read when it's turned on) and its sprites (built when it's next drawn).
+    private CharacterLook? _twinLook;
+    private CharacterSprites? _twin;
+
+    private void ToggleTwin()
+    {
+        _twin?.Dispose();
+        _twin = null;
+        _twinLook = _twinLook == null ? CharacterLook.OfPlayer() : null;
+        if (_twinLook != null)
+            _context.Log($"A twin from your look: {_twinLook.Layers.Count} layers, {_twinLook.ToJson().Length} characters of JSON");
+    }
+
+    private void DrawTwin(Instance player)
+    {
+        if (_twinLook == null)
+            return;
+        if (_twin == null)
+        {
+            _twin = _twinLook.Build();
+            if (_twin == null)
+            {
+                _context.Log("Couldn't build the twin's sprites from your look");
+                _twinLook = null;
+                return;
+            }
+            _context.Log($"Built the twin's sprites: {string.Join(", ", _twin.All)}");
+        }
+        // (Drawn as you are: your frame and facing, a tile to the right.)
+        Draw.SpriteExt(_twin.For(0, false), player["image_index"].AsReal, player["x"].AsReal + Cell.Size, player["y"].AsReal,
+            player["image_xscale"].AsReal, player["image_yscale"].AsReal);
+    }
+
+    // The game being played (SaveData): its save data's sections, the character's apart from the world's - and the saves
+    // on disk (SaveSlots): this character's folder and its saves, and every other folder.
+    private void LogSaves()
+    {
+        string? json = SaveData.ToJson();
+        _context.Log($"Save data: {json?.Length ?? 0} characters of JSON; the character's sections: {string.Join(", ", SaveData.CharacterSections)} "
+            + $"({SaveData.CharacterJson()?.Length ?? 0} characters); the world's: {string.Join(", ", SaveData.WorldSections)}");
+        if (SaveSlots.Current is { } slot)
+        {
+            _context.Log($"  This game's folder: {slot.Name} ({slot.Info?.CharacterName}), last save {SaveSlots.CurrentSave?.Name}");
+            foreach (var save in slot.Saves)
+                _context.Log($"    {save.Name} ({save.Kind}): {save.Info?.LocationTitleKey}, {save.Info?.SavedAt}");
+        }
+        else
+            _context.Log("  This game has no folder yet (never saved)");
+        foreach (var other in SaveSlots.All)
+            _context.Log($"  {other.Name}: {other.Info?.CharacterName ?? "?"}, saved {other.Info?.SavedAt}, {other.Saves.Count} save(s)");
+    }
+
+    // Items on the ground (GroundItems): the item nearest you that the game saves (not one placed with the location)
+    // goes out in the game's save format and a copy is made from it, landed right where the first lies - as another game
+    // or a stash would make it. Then a wine is put at your feet with the game's hop, and its flight logged: what another
+    // game needs to fly its copy along the same arc (GroundItem.Fly).
+    private void CopyNearestItem(double x, double y)
+    {
+        var nearest = GroundItems.All()
+            .Where(item => !item.IsStatic)
+            .OrderBy(item => Math.Pow(item.X - x, 2) + Math.Pow(item.Y - y, 2))
+            .FirstOrDefault();
+        if (nearest.Instance.IsNone || nearest.ToJson() is not { } json)
+            _context.Log("No item on the ground here to copy (drop one first)");
+        else if (GroundItems.Create(json) is { } copy)
+            _context.Log($"Copied {copy.ObjectName} at ({copy.X}, {copy.Y}) from its save: {json}");
+        else
+            _context.Log($"Couldn't make an item from: {json}");
+        if (GroundItems.Spawn("wine", x, y, hop: true) is { Flight: { } flight })
+            _context.Log($"A wine hops from ({flight.X}, {flight.Y}) to ({flight.TargetX}, {flight.TargetY}): {flight.ToJson()}");
+    }
+
+    // The saved state of the location you're in (Locations): each room it has, and each room's presets - what will spawn
+    // afresh next time (its flags) and which kinds of entities it has saved. (The room you're in is saved as you leave.)
+    private void LogLocation(string locationTag, GmValue roomTag)
+    {
+        if (Locations.Get(locationTag) is not { } location)
+        {
+            _context.Log($"Location {locationTag}: nothing saved yet (you're in {roomTag}, saved as you leave it)");
+            return;
+        }
+        _context.Log($"Location {locationTag} (you're in {roomTag}): {location.Rooms.Count} room(s) saved");
+        foreach (GmValue tag in location.Rooms)
+        {
+            if (location.Room(tag) is not { } room)
+                continue;
+            foreach (GmValue presetTag in room.Presets)
+            {
+                if (room.Preset(presetTag) is not { } preset)
+                    continue;
+                string kinds = "nothing saved";
+                if (preset.Entities is { } entities)
+                {
+                    kinds = string.Join(", ", entities.Keys.Select(key => key.AsString));
+                    entities.Destroy();
+                }
+                _context.Log($"  {tag} / {presetTag}: flags {preset.Flags}; {kinds}");
+            }
+        }
+    }
+
+    // Every Example Tonic lying on the ground in the room - the off-screen ones too, which the game has culled
+    // (deactivated): listed with includeCulled, and destroyed safely - a culled one leaves the game's culling list
+    // first. A tonic on the ground is its own object (o_loot_ and its game key), told apart by object_index even
+    // while it's culled - its own variables can't be read then.
+    private void ClearTonics()
+    {
+        int tonic = Gm.AssetGetIndex($"o_loot_{_context.Id}__{_tonic.Key}");
+        if (tonic < 0)
+            return;
+        int cleared = 0, offScreen = 0;
+        foreach (var item in Instances.All(tonic, includeCulled: true))
+        {
+            if (item.IsCulled)
+                offScreen++;
+            item.Destroy();
+            cleared++;
+        }
+        _context.Log($"Cleared {cleared} Example Tonic(s) off the ground ({offScreen} of them off screen)");
     }
 }
