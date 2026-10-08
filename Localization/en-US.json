@@ -111,7 +111,7 @@
   "ui.examplewindow.frames_per_second": "Frames per second:",
   "ui.examplewindow.made_by_the_example_mod": "Made by the Example Mod.",
   "ui.examplewindow.options": "Options",
-  "ui.examplewindow.say_hello": "Say helloo",
+  "ui.examplewindow.say_hello": "Say hello",
   "ui.examplewindow.this_window_is_drawn_by_stoneforge": "This window is drawn by StoneForge in the game's look - its Settings menu's frame, tabs, scrolling page and buttons - and any UI element can go on it.",
   "ui.fpsgraph.fps": "{0:0} fps",
   "ui.hudbadge.calm": "calm",
@@ -132,6 +132,5 @@
   "time.night": "Night",
   "time.frozen": " (frozen)",
   "world.wilds": "Wilds",
-  "world.floor": ", floor {0}",
-  "skills.exampleskill.a_bolt_made_in_c_it": "A bolt made in C#: it leaves its target Shocked for 4 turns."
+  "world.floor": ", floor {0}"
 }
