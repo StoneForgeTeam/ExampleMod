@@ -42,7 +42,7 @@ public sealed class ExampleInventory
         ContextMenus.Add(context, ExampleText.Get("exampleinventory.make_it_a_boss_chest"), target => IsContainer(target) && !Containers.HasBeenOpened(target),
             chest => Log(Containers.SetLootTable(chest, "cryptBossChest", 5), "It'll roll a crypt boss chest's loot", "Too late: it's been opened"),
             hover: ExampleText.Get("exampleinventory.example_mod_it_rolls_a_tier"));
-        EscMenu.AddBefore(context, EscButton.Settings, ExampleText.Get("exampleinventory.give_a_worn_blade"), () =>
+        ExampleActions.Add("exampleinventory.give_a_worn_blade", () =>
         {
             if (Inventory.Add<ExampleBlade>(setup: Wear) is { } blade)
                 context.Log($"Gave a worn Example Blade: {blade.Durability:0}/{blade.MaxDurability:0}, ours: {blade.ModData(context)["given"]}");

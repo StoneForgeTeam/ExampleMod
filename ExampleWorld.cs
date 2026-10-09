@@ -30,8 +30,8 @@ public sealed class ExampleWorld
     public ExampleWorld(ModContext context)
     {
         _context = context;
-        EscMenu.AddBefore(context, EscButton.Settings, ExampleText.Get("exampleworld.rest_an_hour"), AskToRest);
-        EscMenu.AddBefore(context, EscButton.Settings, ExampleText.Get("exampleworld.mark_this_spot"), MarkThisSpot);
+        ExampleActions.Add("exampleworld.rest_an_hour", AskToRest);
+        ExampleActions.Add("exampleworld.mark_this_spot", MarkThisSpot);
         MapMarkers.OnPlaced(context, marker => context.Log($"You placed a {marker.Sprite} marker on {marker.Tile}"));
         MapMarkers.OnRemoved(context, marker => context.Log($"You took the {marker.Sprite} marker off {marker.Tile}"));
         Rooms.OnEntered(context, room => context.Log($"Entered {Rooms.CurrentName}"));

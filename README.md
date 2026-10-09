@@ -49,6 +49,31 @@ The Left/Right setting values remain English because StoneForge saves choices by
 
 The English catalog preserves the existing wording. This sample does not translate
 third-party mods, engine object names, user-entered notes or diagnostic log messages.
+## Custom quests and contracts
+
+`ExampleQuests` registers a saved bounty quest and a custom dungeon contract.
+In a loaded game, open Esc and choose **Start example bounty**. Defeat three enemies
+to complete its journal entry and receive 100 crowns and 50 XP once. Save/load and
+mod reload retain its progress and reward claim.
+
+The **A brigand bounty** contract joins normal brigand contract generation; existing
+assignments remain unchanged. When a new eligible dungeon contract is generated,
+take it normally, enter its dungeon, defeat three foes there, then return for payment.
+The game handles the deadline and settlement rewards. All display text has catalog keys.
+
+## Random Osbrook jobs
+
+Three different Osbrook townspeople are randomly assigned one job each per save. Open **Esc > Example Mod > Osbrook jobs** to see who has each job. Stand within two steps, choose **Talk** with that NPC, then **Ask about work**. Accept the offer; later choose **Report on your job** to deliver supplies or claim payment. Vanilla Talk, trade and quests remain available.
+
+Jobs: three peppermint plants (90 crowns / 30 XP), two non-rotten loaves of bread (80 crowns / 25 XP), or three surface brigands within three map tiles of Osbrook (150 crowns / 75 XP). Supply deliveries can be partial. Dungeon kills and brigand dogs do not count. Return to the same NPC for rewards. Assignments and progress are saved; these are one-time jobs.
+
+
+### Branching dialogue
+
+The Osbrook jobs use StoneForge's reusable dialogue API (context.Dialogues). The job topic uses Stoneshard's native dialogue window, portrait, conversation history and response buttons, with localized Accept / Decline choices, partial-delivery replies and payment acknowledgement. Supply or reward choices are disabled until their conditions are met. Finish the job topic to return to the NPC's normal conversation. Quest progress and assignments survive this update.
+
+
+The example adds one **Example Mod** entry to Esc. Its window groups Osbrook jobs, the test bounty, Rest an Hour, Mark This Spot and Give a Worn Blade. Action labels refresh with localization.
 
 ## Dialogue actions and conditions
 
@@ -78,3 +103,5 @@ edits. JSON backups and temporary editor files are not included in this example.
 
 This example requires the StoneForge build containing the dialogue editor and
 `DialogCondition` API. See [dialogue documentation](https://github.com/StoneForgeTeam/StoneForge/blob/main/docs/Dialogues.md).
+
+Quest NPC responses distinguish **Hand over supplies** from **Claim reward**, explain missing supplies or brigands, and keep a thank-you topic after completion. In the editor, bind **examplemod:accept_job** or **examplemod:turn_in_job**, with their matching **accept_job_condition** / **turn_in_job_condition**. Both actions recheck eligibility before changing the quest. Lines use live placeholders such as {0} and {1}; keep those in edited translations to retain progress counts.

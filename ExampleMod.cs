@@ -31,6 +31,9 @@ public class ExampleMod : IStoneMod, ITickable
     {
         _context = context;
         ExampleText.Initialize(context);
+        ExampleActions.Initialize(context);
+        new ExampleQuests(context);
+        new ExampleNpcJobs(context);
         // Its settings (ExampleSettings): on its page in the Mods window.
         var settings = new ExampleSettings(context.Settings);
         context.Log(settings.Greeting.Value);
