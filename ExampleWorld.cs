@@ -16,9 +16,7 @@ namespace ExampleMod;
 // - an enemy's right-click menu gets Inspect, Stun and Push (ContextMenus): Inspect logs where it stands (Units) and the
 //   effects on it (UnitEffects), Stun puts the game's stun on it from you (UnitEffects.Create), Push moves it a cell
 //   away from you, onto the nearest free one (Units.NearestFreeCell, Units.Move);
-// - a middle click on the world (Mouse.ClickedWorld - not on any window, and in the game's window) logs the cell and
-//   who stands on it (Mouse.Cell, Mouse.Unit), and walks you there if it's empty (Player.WalkTo); with Ctrl, you go out
-//   by the nearest way out instead (Exits).
+// Middle mouse belongs to Stoneshard's camera panning; this example leaves it alone.
 public sealed class ExampleWorld
 {
     private readonly ModContext _context;
@@ -58,24 +56,7 @@ public sealed class ExampleWorld
             Blackout.Hide();
             _context.Log($"Rested an hour: {before} -> {Time.Now}");
         }
-        if (!Gm.InGame || !Mouse.ClickedWorld(Mouse.Middle))
-            return;
-        if (Keyboard.Down(Keyboard.Control))
-        {
-            Instance door = Exits.Nearest(Units.CellOf(Player.Instance));
-            _context.Log(door.IsNone ? "No way out of here" : $"Leaving by {Gm.ObjectGetName(door.Get("object_index").AsInt)}");
-            Exits.Use(door);
-            return;
-        }
-        Cell cell = Mouse.Cell;
-        Instance unit = Mouse.Unit;
-        if (unit.IsNone)
-        {
-            _context.Log($"Cell {cell} is empty: walking there");
-            Player.WalkTo(cell);
-        }
-        else
-            _context.Log($"Cell {cell}: {Gm.ObjectGetName(unit.Get("object_index").AsInt)}{(Units.IsPlayer(unit) ? " (you)" : "")}");
+
     }
 
     private void MarkThisSpot()

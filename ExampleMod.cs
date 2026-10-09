@@ -108,7 +108,7 @@ public class ExampleMod : IStoneMod, ITickable
         // A badge on the game's HUD (HudBadge): under the game's windows, hidden with its HUD.
         context.UI.Hud.Add(new HudBadge());
         // The world through the game's own menus and the mouse (ExampleWorld): Rest an Hour in the Esc menu; Inspect,
-        // Stun and Push on an enemy's right-click menu; a middle click on the world.
+        // Stun and Push on an enemy's right-click menu.
         _world = new ExampleWorld(context);
 
         // Two effects of our own (ExampleBuffs) and an item that uses them (ExampleBlade); F7 in game gives the

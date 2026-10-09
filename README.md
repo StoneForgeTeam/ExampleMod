@@ -105,3 +105,5 @@ This example requires the StoneForge build containing the dialogue editor and
 `DialogCondition` API. See [dialogue documentation](https://github.com/StoneForgeTeam/StoneForge/blob/main/docs/Dialogues.md).
 
 Quest NPC responses distinguish **Hand over supplies** from **Claim reward**, explain missing supplies or brigands, and keep a thank-you topic after completion. In the editor, bind **examplemod:accept_job** or **examplemod:turn_in_job**, with their matching **accept_job_condition** / **turn_in_job_condition**. Both actions recheck eligibility before changing the quest. Lines use live placeholders such as {0} and {1}; keep those in edited translations to retain progress counts.
+
+Middle mouse retains Stoneshard's camera panning. The example does not bind it to walking or using exits.
