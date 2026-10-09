@@ -1,0 +1,56 @@
+{
+  "Version": 1,
+  "Edits": [
+    {
+      "Npc": "npc_verren",
+      "Root": "stoneforge_dialogue_examplemod:editor_cdf25c0645d44ae1ba60b965c39dc798",
+      "Field": "line/mod/examplemod:editor_cdf25c0645d44ae1ba60b965c39dc798/reply/line/variant/6B4B07E904FBA29E6CBA0938921F6A8B2075B267196B83E08EB801EB12182C5B",
+      "Text": {
+        "en-US": "New NPC reply"
+      },
+      "Position": null,
+      "Deleted": false,
+      "Localized": false,
+      "ActionId": null,
+      "ConditionId": null
+    },
+    {
+      "Npc": "npc_verren",
+      "Root": "stoneforge_dialogue_examplemod:editor_d5d95f4d49494ad7a8d405100ac3cd59",
+      "Field": "line/mod/examplemod:editor_d5d95f4d49494ad7a8d405100ac3cd59/reply/line/variant/6B4B07E904FBA29E6CBA0938921F6A8B2075B267196B83E08EB801EB12182C5B",
+      "Text": {
+        "en-US": "What?"
+      },
+      "Position": null,
+      "Deleted": false,
+      "Localized": false,
+      "ActionId": null,
+      "ConditionId": null
+    },
+    {
+      "Npc": "npc_verren",
+      "Root": "stoneforge_dialogue_examplemod:editor_d5d95f4d49494ad7a8d405100ac3cd59",
+      "Field": "option/mod/examplemod:editor_d5d95f4d49494ad7a8d405100ac3cd59/reply/choice/back/variant/76900F1BFD16C8D4DD3D25E6F46638D7165AEE23883CCEA6BFE071C514421769",
+      "Text": {
+        "en-US": "Nevermind."
+      },
+      "Position": null,
+      "Deleted": false,
+      "Localized": false,
+      "ActionId": null,
+      "ConditionId": null
+    },
+    {
+      "Npc": "npc_verren",
+      "Root": "verren_intro",
+      "Field": "option/introVerren00_pc",
+      "Text": {},
+      "Position": null,
+      "Deleted": false,
+      "Localized": false,
+      "ActionId": "examplemod:kill",
+      "ConditionId": "examplemod:kill_condition"
+    }
+  ],
+  "Topics": []
+}

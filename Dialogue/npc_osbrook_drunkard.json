@@ -1,0 +1,91 @@
+{
+  "Version": 1,
+  "Edits": [
+    {
+      "Npc": "osbrook_drunkard",
+      "Root": "osbrook_drunkard",
+      "Field": "line/greeting/variant/EA6F79A0DA421B47EC912584854E680558F39CBCF9BAB4252A7CD1083208822E",
+      "Text": {
+        "en-US": "Hello."
+      },
+      "Position": null,
+      "Deleted": false,
+      "Localized": false,
+      "ActionId": null,
+      "ConditionId": null
+    },
+    {
+      "Npc": "osbrook_drunkard",
+      "Root": "osbrook_drunkard",
+      "Field": "option/miniquest_inquiry/variant/4D69316E44F7E8B9F3F9BBDF8265356418797E40C32237642D4F3F6135FE4287",
+      "Text": {
+        "en-US": "What"
+      },
+      "Position": null,
+      "Deleted": false,
+      "Localized": false,
+      "ActionId": null,
+      "ConditionId": null
+    },
+    {
+      "Npc": "osbrook_drunkard",
+      "Root": "osbrook_drunkard",
+      "Field": "option/trade/variant/CDBE83FD80EA6CDFCBC17FE0BC3AB60CB1FE67E2CC8E2F8C4B3BAD4777EB06A8",
+      "Text": {
+        "en-US": "Wares?"
+      },
+      "Position": null,
+      "Deleted": false,
+      "Localized": false,
+      "ActionId": null,
+      "ConditionId": null
+    },
+    {
+      "Npc": "osbrook_drunkard",
+      "Root": "osbrook_drunkard",
+      "Field": "option/learn",
+      "Text": {},
+      "Position": null,
+      "Deleted": true,
+      "Localized": false,
+      "ActionId": null,
+      "ConditionId": null
+    },
+    {
+      "Npc": "osbrook_drunkard",
+      "Root": "osbrook_drunkard",
+      "Field": "option/trade",
+      "Text": {},
+      "Position": null,
+      "Deleted": true,
+      "Localized": false,
+      "ActionId": null,
+      "ConditionId": null
+    },
+    {
+      "Npc": "osbrook_drunkard",
+      "Root": "osbrook_drunkard",
+      "Field": "option/miniquest_inquiry",
+      "Text": {},
+      "Position": null,
+      "Deleted": true,
+      "Localized": false,
+      "ActionId": null,
+      "ConditionId": null
+    },
+    {
+      "Npc": "osbrook_drunkard",
+      "Root": "osbrook_drunkard",
+      "Field": "line/greeting/variant/260DC8AB5EF4921A31EB90D2B0E2065823971E6C39CB1FABCA0445C70449BCC5",
+      "Text": {
+        "en-US": "G-good d-day, young m-man... or... fine l-lady... hiccup!.."
+      },
+      "Position": null,
+      "Deleted": false,
+      "Localized": false,
+      "ActionId": null,
+      "ConditionId": null
+    }
+  ],
+  "Topics": []
+}

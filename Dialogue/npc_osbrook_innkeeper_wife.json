@@ -1,0 +1,71 @@
+{
+  "Version": 1,
+  "Edits": [
+    {
+      "Npc": "osbrook_innkeeper_wife",
+      "Root": "osbrook_innkeeper_wife",
+      "Field": "line/greeting/variant/AF91EF5EB058F04241B47B65AF6CFE53649B0F88F7693153FA4762122E1D3C39",
+      "Text": {
+        "en-US": "Hello"
+      },
+      "Position": null,
+      "Deleted": false,
+      "Localized": false,
+      "ActionId": null,
+      "ConditionId": null
+    },
+    {
+      "Npc": "osbrook_innkeeper_wife",
+      "Root": "osbrook_innkeeper_wife",
+      "Field": "line/greeting/variant/2D56E2EEB7C468EA4FDA95B3E460FEEA2C9714390C2A7B4A79B43CCF3A04CB9B",
+      "Text": {
+        "en-US": "Hello"
+      },
+      "Position": null,
+      "Deleted": false,
+      "Localized": false,
+      "ActionId": null,
+      "ConditionId": null
+    },
+    {
+      "Npc": "osbrook_innkeeper_wife",
+      "Root": "osbrook_innkeeper_wife",
+      "Field": "line/greeting/variant/5EB3AC8F810EFFBB5AF481021798BF9C97DC55995622CBF970059EFE3C98AE30",
+      "Text": {
+        "en-US": "Hello"
+      },
+      "Position": null,
+      "Deleted": false,
+      "Localized": false,
+      "ActionId": null,
+      "ConditionId": null
+    },
+    {
+      "Npc": "osbrook_innkeeper_wife",
+      "Root": "osbrook_innkeeper_wife",
+      "Field": "option/chat/variant/7F9A834A5079F52118A803A2B5D044912F78CBC1F5BFCCCA793E1F9CD2D63220",
+      "Text": {
+        "en-US": "Heard anything?"
+      },
+      "Position": null,
+      "Deleted": false,
+      "Localized": false,
+      "ActionId": null,
+      "ConditionId": null
+    },
+    {
+      "Npc": "osbrook_innkeeper_wife",
+      "Root": "osbrook_innkeeper_wife",
+      "Field": "option/chat/variant/AA24F06D76C1EDE874762933F5DC4ACCC0172696490D0FFE218AB0A4B1E1BC82",
+      "Text": {
+        "en-US": "How about a chat?"
+      },
+      "Position": null,
+      "Deleted": false,
+      "Localized": false,
+      "ActionId": null,
+      "ConditionId": null
+    }
+  ],
+  "Topics": []
+}

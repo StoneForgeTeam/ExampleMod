@@ -49,3 +49,32 @@ The Left/Right setting values remain English because StoneForge saves choices by
 
 The English catalog preserves the existing wording. This sample does not translate
 third-party mods, engine object names, user-entered notes or diagnostic log messages.
+
+## Dialogue actions and conditions
+
+`ExampleDialogueActions` registers `examplemod:kill` with `[DialogOption]` and
+`examplemod:kill_condition` with `[DialogCondition]`. StoneForge discovers both
+static methods automatically when this mod loads.
+
+Before entering the game, select Example Mod in **Mods** and click **Enable dev**.
+Talk to an NPC and right-click a response. Choose **Trigger Code** to assign
+`examplemod:kill`, and **Add condition** to assign `examplemod:kill_condition`.
+An assigned condition changes that menu entry to **Remove condition**.
+
+The condition returns `Enabled` for a living NPC other than the player when the
+player has at least 100 crowns. Otherwise it returns `Visible`, keeping the
+response shown but disabled. `Hidden` is also available for conditions that
+should hide a response. The Kill action closes the conversation, deals fatal
+pure damage to its speaker, invokes native death handling, and deducts 100 crowns.
+It checks eligibility again before performing the action.
+
+Install the `Dialogue` folder alongside this mod's source. Its per-NPC JSON files
+demonstrate text replacements, removed responses, and action/condition bindings.
+`npc_verren.json` binds Kill and its condition to a response in Verren's introduction.
+Saved edits load even with Dev disabled. While developing, the dialogue window's
+language dropdown previews translations; right-click **Edit text** edits in place,
+Enter saves, and Escape cancels. **Restore original** and **Restore dialogue** clear
+edits. JSON backups and temporary editor files are not included in this example.
+
+This example requires the StoneForge build containing the dialogue editor and
+`DialogCondition` API. See [dialogue documentation](https://github.com/StoneForgeTeam/StoneForge/blob/main/docs/Dialogues.md).
